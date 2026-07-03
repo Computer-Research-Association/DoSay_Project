@@ -14,7 +14,8 @@ BOARD_SIZE = (HEIGHT, WIDTH) = (9, 18) # 보드의 크기 (행, 열)
 class Simulator:
     weights: dict[str, float] # feature weight
 
-    def play_game(self, board) -> GameResult:
+    # 시뮬레이션 한 번을 수행하고, 결과를 GameResult 객체로 반환
+    def play_game(self, board: Board) -> GameResult:
         turn = 0
         score = 0
         is_all_clear = False
@@ -26,9 +27,9 @@ class Simulator:
                 break
 
             actions = board.get_valid_actions()
-            best_action = pick_best_action(actions, board.board, self.weights) 
+            best_action = pick_best_action(actions, board.grid, self.weights) 
            
-            area = self.get_area(board.board, best_action)
+            area = self.get_area(board.grid, best_action)
             cleared = int((area != 0).sum())  # 이번에 지운 칸 수
             score += cleared
 
@@ -51,12 +52,13 @@ class Simulator:
         return board[r1:r2+1, c1:c2+1]
     
 
+    # 시뮬레이션을 n_games회 반복하고, 결과를 요약하여 EvaluateSummary 객체로 반환
     def simulate(self, n_games: int) -> EvaluateSummary:
         scores, turns, times, ratios = [], [], [], []
         all_clear_count = 0
 
         for _ in range(n_games):
-            result = self.play_game(Board())
+            result = self.play_game(Board(board_size=BOARD_SIZE))
             scores.append(result.score)
             turns.append(result.turn)
             times.append(result.time)
@@ -66,6 +68,7 @@ class Simulator:
 
         return self._evaluate_summary(scores, turns, times, ratios, all_clear_count, n_games)
     
+
 
     def _evaluate_summary(self, scores, turns, times, ratios, all_clear_count, n_games) -> EvaluateSummary:
         max_score = max(scores)
