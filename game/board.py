@@ -2,6 +2,13 @@ import numpy as np
 from numpy.typing import NDArray
 from .action import Action
 
+def compute_prefix_sum(grid: NDArray) -> NDArray:
+    height, width = grid.shape
+    prefix = np.zeros((height + 1, width + 1), dtype=np.int32)
+    np.cumsum(grid, axis=0, out=prefix[1:, 1:])
+    np.cumsum(prefix[1:, 1:], axis=1, out=prefix[1:, 1:])
+    return prefix    
+
 class Board():
     def __init__(self, init_board: NDArray[np.int8] | None = None, board_size: tuple[int, int] | None = None, seed = None):
         self.sum_prefix: NDArray[np.int32]
@@ -29,12 +36,10 @@ class Board():
         self.sum_prefix = np.empty((R+1, C+1), dtype=np.int32)
         self._update_prefix()
 
+
     def _update_prefix(self):
-        new_prefix = np.zeros(self.sum_prefix.shape, dtype=np.int32)
-        np.cumsum(self.grid, axis=0, out=new_prefix[1:, 1:])
-        np.cumsum(new_prefix[1:, 1:], axis=1, out=new_prefix[1:, 1:])
-        self.sum_prefix = new_prefix
-        
+        self.sum_prefix = compute_prefix_sum(self.grid)
+
     def do_action(self, action: Action) -> None:
         # if not self.is_valid_action(action):
         #     return False
