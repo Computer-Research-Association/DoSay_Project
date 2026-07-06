@@ -64,12 +64,31 @@ class Board():
                         area_sum = self._get_area_sum((r1, c1), (r2, c2))
 
                         if area_sum == 10:
-                            action = Action((r1, c1), (r2, c2))
-                            valid_actions.append(action)
+                            if self.is_smallest_action((r1, c1), (r2, c2)):
+                                valid_actions.append(Action((r1, c1), (r2, c2)))
+                            else:
+                                continue
                         elif area_sum > 10:
                             break
 
         return valid_actions
+    
+    def is_smallest_action(self, top_left: tuple[int, int], bottom_right: tuple[int, int]) -> bool:
+        (r1, c1), (r2, c2) = top_left, bottom_right
+
+        top_sum = self._get_area_sum((r1, c1), (r1, c2))
+        if top_sum == 0: return False
+
+        right_sum = self._get_area_sum((r1, c2), (r2, c2))
+        if right_sum == 0: return False
+
+        bottom_sum = self._get_area_sum((r2, c1), (r2, c2))
+        if bottom_sum == 0: return False
+
+        left_sum = self._get_area_sum((r1, c1), (r2, c1))
+        if left_sum == 0: return False
+
+        return True
     
     # def is_valid_action(self, action: Action) -> bool:
     #     area = self.get_area(action)
