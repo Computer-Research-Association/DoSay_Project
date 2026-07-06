@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-@dataclass
+@dataclass(frozen=True)
 class Action:
     # (row, col)
     top_left: tuple[int, int]
