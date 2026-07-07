@@ -3,6 +3,7 @@ from numpy.typing import NDArray
 from game.action import Action
 from dataclasses import dataclass
 from game.board import compute_prefix_sum
+from game.action import Action
 
 
 @dataclass 
