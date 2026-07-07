@@ -27,7 +27,7 @@ class Simulator:
                 break
 
             actions = board.get_valid_actions()
-            best_action = pick_best_action(actions, board.grid, self.weights) 
+            best_action = pick_best_action(actions, board.grid, self.weights)
            
             area = self.get_area(board.grid, best_action)
             cleared = int((area != 0).sum())  # 이번에 지운 칸 수
