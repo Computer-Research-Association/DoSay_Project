@@ -1,10 +1,10 @@
 from game.action import Action
 
-from .feature_context import feature_context
+from .feature_context import FeatureContext
 from .feature_spec import FEATURES
 
 # 각 feature_spec에 대해, feature_context를 받아서 점수를 계산하는 함수
-def evaluate(ctx: feature_context, weights: dict[str, float]) -> float:
+def evaluate(ctx: FeatureContext, weights: dict[str, float]) -> float:
     score = 0.0
     for feature_spec in FEATURES:
         feature_func = feature_spec.func
@@ -23,7 +23,7 @@ def pick_best_action(actions, board, weights: dict[str, float]) -> Action:
         r1, c1 = action.top_left
         r2, c2 = action.bottom_right
         next_board[r1:r2+1, c1:c2+1] = 0
-        ctx = feature_context.from_board(next_board, action)
+        ctx = FeatureContext.from_board(next_board, action)
         score = evaluate(ctx, weights)
 
         if score > best_score:
