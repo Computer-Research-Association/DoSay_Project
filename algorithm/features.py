@@ -100,6 +100,14 @@ def _has_five_pair(ctx : FeatureContext) -> bool:
             return True
     return False
     
+def feature_remove_the_most_grouping(ctx : FeatureContext) -> float:
+    (x1, y1), (x2, y2) = ctx.action.top_left, ctx.action.bottom_right
+    area = ctx.board[x1:x2+1, y1:y2+1]
+    count = (area != 0).sum()
+
+    return float(count) / 10.0
+
+
 
 
 
