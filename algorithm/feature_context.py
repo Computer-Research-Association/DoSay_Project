@@ -11,7 +11,7 @@ from game.board import Board
 @dataclass 
 class FeatureContext:
     board_array: NDArray[np.int8] # 숫자 배열의 좌푯값
-    boared_obj : Board #Board 인스턴트
+    board_obj : Board #Board 인스턴트
     prefix: NDArray  # 누적합
     count_by_value: dict[int, int]  #숫자별 남아있는 개수
     action : Action
