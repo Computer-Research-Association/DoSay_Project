@@ -1,9 +1,12 @@
 import numpy as np
 from numpy.typing import NDArray
+
 from dataclasses import dataclass, field
 from game.board import compute_prefix_sum
 from game.action import Action
 from game.board import Board
+
+
 
 @dataclass 
 class FeatureContext:
