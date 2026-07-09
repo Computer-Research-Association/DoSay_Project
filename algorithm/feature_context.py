@@ -20,7 +20,7 @@ class FeatureContext:
     @property
     def valid_actions(self): #valid action 함수 불러오기
         if self._valid_actions is None:
-            self._valid_actions = self.board_obj.get_valid_actions(self.board)  # next_board 기준으로 딱 1번
+            self._valid_actions = self.board_obj.get_valid_actions()  # next_board 기준으로 딱 1번
         return self._valid_actions
 
     @classmethod 
