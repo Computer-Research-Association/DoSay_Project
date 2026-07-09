@@ -53,7 +53,7 @@ def feature_remove_five(ctx: FeatureContext) -> float:
 #9와 짝이 되는 valid action이 있는지 여부 확인
 def _has_nine_one_pair(ctx : FeatureContext) -> bool:
 
-    for action in ctx.valid_actions:
+    for action in ctx._valid_actions:
         r1, c1 = action.top_left
         r2, c2 = action.bottom_right
         region = ctx.board_array[r1:r2+1, c1:c2+1]
@@ -62,7 +62,7 @@ def _has_nine_one_pair(ctx : FeatureContext) -> bool:
     return False
 def _has_eight_pair(ctx : FeatureContext) -> bool:
 
-    for action in ctx.valid_actions:
+    for action in ctx._valid_actions:
         r1, c1 = action.top_left
         r2, c2 = action.bottom_right
         region = ctx.board_array[r1:r2+1, c1:c2+1]
@@ -71,7 +71,7 @@ def _has_eight_pair(ctx : FeatureContext) -> bool:
     return False
 def _has_seven_pair(ctx : FeatureContext) -> bool:
 
-    for action in ctx.valid_actions:
+    for action in ctx._valid_actions:
         r1, c1 = action.top_left
         r2, c2 = action.bottom_right
         region = ctx.board_array[r1:r2+1, c1:c2+1]
@@ -80,7 +80,7 @@ def _has_seven_pair(ctx : FeatureContext) -> bool:
     return False
 def _has_six_pair(ctx : FeatureContext) -> bool:
 
-    for action in ctx.valid_actions:
+    for action in ctx._valid_actions:
         r1, c1 = action.top_left
         r2, c2 = action.bottom_right
         region = ctx.board_array[r1:r2+1, c1:c2+1]
@@ -89,7 +89,7 @@ def _has_six_pair(ctx : FeatureContext) -> bool:
     return False
 def _has_five_pair(ctx : FeatureContext) -> bool:
 
-    for action in ctx.valid_actions:
+    for action in ctx._valid_actions:
         r1, c1 = action.top_left
         r2, c2 = action.bottom_right
         region = ctx.board_array[r1:r2+1, c1:c2+1]
