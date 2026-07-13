@@ -2,7 +2,7 @@
 import time
 
 import numpy as np
-from algorithm.evaluate_result import EvaluateSummary, GameResult
+from evaluator.evaluate_result import EvaluateSummary, GameResult
 from DoSay_Project.evaluator.evaluator import pick_best_action
 from dataclasses import dataclass
 from game.board import Board
