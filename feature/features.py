@@ -1,5 +1,5 @@
-from .feature_context import FeatureContext
-from .math_algorithm import sigmoid
+from ..feature_assistance.feature_context import FeatureContext
+from ..feature_assistance.math_algorithm import sigmoid
 
 #숫자 편향 features ex) 지울 수 있는 'n'이라는 숫자가 몇 개 남았는가 점수를 올림으로써 지우게끔 유도
 def feature_remove_nine(ctx: FeatureContext) -> float:
