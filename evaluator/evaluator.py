@@ -1,7 +1,7 @@
 from game.action import Action
 
-from .feature_context import FeatureContext
-from .feature_spec import FEATURES
+from ..feature_assistance.feature_context import FeatureContext
+from ..feature_assistance.feature_spec import FEATURES
 
 # 각 feature_spec에 대해, feature_context를 받아서 점수를 계산하는 함수
 def evaluate(ctx: FeatureContext, weights: dict[str, float]) -> float:
