@@ -15,13 +15,29 @@ class FeatureContext:
     prefix: NDArray  # 누적합
     count_by_value: dict[int, int]  #숫자별 남아있는 개수
     action : Action
-    _valid_actions: list | None = field(default=None, repr=False)
     
+
+    _area: NDArray | None = field(default= None, repr = False)
+    _board_after_action : NDArray | None = field(default= None, repr = False)
+    _board_obj: "Board | None" = field(default=None, repr = False)
+    _valid_actions: list | None = field(default=None, repr=False)
+
     @property
     def valid_actions(self): #valid action 함수 불러오기
         if self._valid_actions is None:
             self._valid_actions = self.board_obj.get_valid_actions()  # next_board 기준으로 딱 1번
         return self._valid_actions
+    
+    @property
+    def board_after_action(self): 
+        if self._board_after_action is None:
+            r1, c1 = self.action.top_left
+            r2, c2 = self.action.bottom_right
+            temp = self.board_array.copy()
+            temp[r1:r2+1, c1:c2+1] = 0
+            self._board_after_action = temp
+
+        return self._board_after_action
 
     @classmethod 
     def from_board(cls, board_array, action) -> "FeatureContext":

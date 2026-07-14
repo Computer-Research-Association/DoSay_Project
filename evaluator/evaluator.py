@@ -19,11 +19,7 @@ def pick_best_action(actions, board, weights: dict[str, float]) -> Action:
     best_score = float('-inf')
 
     for action in actions:
-        next_board = board.copy()
-        r1, c1 = action.top_left
-        r2, c2 = action.bottom_right
-        next_board[r1:r2+1, c1:c2+1] = 0
-        ctx = FeatureContext.from_board(next_board, action)
+        ctx = FeatureContext.from_board(board, action)
         score = evaluate(ctx, weights)
 
         if score > best_score:
