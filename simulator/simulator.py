@@ -3,9 +3,10 @@ import time
 
 import numpy as np
 from evaluator.evaluate_result import EvaluateSummary, GameResult
-from DoSay_Project.evaluator.evaluator import pick_best_action
+from evaluator.evaluator import pick_best_action
 from dataclasses import dataclass
 from game.board import Board
+from game.action import slice_area
 
 
 BOARD_SIZE = (HEIGHT, WIDTH) = (9, 18) # 보드의 크기 (행, 열)
@@ -48,8 +49,7 @@ class Simulator:
         )
 
     def get_area(self, board, action):
-        (r1, c1), (r2, c2) = action.top_left, action.bottom_right
-        return board[r1:r2+1, c1:c2+1]
+        return slice_area(board, action)
     
 
     # 시뮬레이션을 n_games회 반복하고, 결과를 요약하여 EvaluateSummary 객체로 반환
