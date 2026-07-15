@@ -5,8 +5,7 @@ import numpy as np
 from evaluator.evaluate_result import EvaluateSummary, GameResult
 from evaluator.evaluator import pick_best_action
 from dataclasses import dataclass
-from game.board import Board
-from game.action import slice_area
+from game.board import Board, slice_area
 
 
 BOARD_SIZE = (HEIGHT, WIDTH) = (9, 18) # 보드의 크기 (행, 열)

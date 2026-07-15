@@ -111,3 +111,8 @@ class Board():
 def _generate_board(size) -> NDArray[np.int8]:
     _board = np.random.randint(1, 10, size=size, dtype=np.int8)
     return _board
+
+def slice_area(board_array: NDArray, action: "Action") -> NDArray:
+    r1, c1 = action.top_left
+    r2, c2 = action.bottom_right
+    return board_array[r1:r2+1, c1:c2+1]
