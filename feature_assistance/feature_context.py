@@ -3,7 +3,7 @@ from numpy.typing import NDArray
 
 from dataclasses import dataclass, field
 from game.board import compute_prefix_sum
-from game.action import Action
+from game.action import Action, slice_area
 from game.board import Board
 
 
@@ -36,8 +36,15 @@ class FeatureContext:
             temp = self.board_array.copy()
             temp[r1:r2+1, c1:c2+1] = 0
             self._board_after_action = temp
-
+ 
         return self._board_after_action
+    
+    @property
+    def area(self):
+        if self._area is None:
+            self._area = slice_area(self.board_array, self.action)
+        return self._area
+
 
     @classmethod 
     def from_board(cls, board_array, action) -> "FeatureContext":
