@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import Callable
-from feature_context import FeatureContext
+from feature_assistance.feature_context import FeatureContext
 from feature import features
 
 @dataclass
