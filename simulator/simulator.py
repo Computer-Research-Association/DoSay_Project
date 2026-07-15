@@ -5,7 +5,7 @@ import numpy as np
 from evaluator.evaluate_result import EvaluateSummary, GameResult
 from evaluator.evaluator import pick_best_action
 from dataclasses import dataclass
-from game.board import Board, slice_area
+from game.board import Board
 
 
 BOARD_SIZE = (HEIGHT, WIDTH) = (9, 18) # 보드의 크기 (행, 열)
@@ -29,7 +29,7 @@ class Simulator:
             actions = board.get_valid_actions()
             best_action = pick_best_action(actions, board.grid, self.weights)
            
-            area = self.get_area(board.grid, best_action)
+            area = board.slice_area(best_action)
             cleared = int((area != 0).sum())  # 이번에 지운 칸 수
             score += cleared
 
@@ -47,8 +47,6 @@ class Simulator:
             max_score_ratio = score / (HEIGHT * WIDTH)
         )
 
-    def get_area(self, board, action):
-        return slice_area(board, action)
     
 
     # 시뮬레이션을 n_games회 반복하고, 결과를 요약하여 EvaluateSummary 객체로 반환
