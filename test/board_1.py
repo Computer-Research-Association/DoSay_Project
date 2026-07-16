@@ -3,7 +3,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from game import Board, Action
 
-board = Board(board_size=(9, 18))
+board = Board.from_seed(size=(9, 18), seed = None)
 
 board.print_board()
 
