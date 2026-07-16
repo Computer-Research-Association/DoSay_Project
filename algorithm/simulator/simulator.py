@@ -28,12 +28,9 @@ class Simulator:
 
             actions = board.get_valid_actions()
             best_action = pick_best_action(actions, board.grid, self.weights)
-           
-            area = board.slice_area(best_action)
-            cleared = int((area != 0).sum())  # 이번에 지운 칸 수
-            score += cleared
+            _, cleared = board.do_action(best_action)
 
-            board.do_action(best_action)
+            score += cleared
             turn += 1
 
         end_time = time.perf_counter()

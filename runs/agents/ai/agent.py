@@ -1,31 +1,32 @@
-from game.board import Board
 from agents.base import Agent
 
 from .utils import ignore_logs
 from .model_loader import load_model
 from agents.dtos import AIInfo
 from ai.envs.apple_env import AppleGameEnv
+from ai.wrappers.action_mask import wrap_with_mask
 
 import time
-from typing import cast
+import gymnasium as gym
+from numpy.typing import NDArray
+from typing import cast, Tuple
 
 class AIAgent(Agent):
-    def __init__(self, env: AppleGameEnv, model_path: str) -> None:
-        super().__init__(env)
-        self.env = env
-        self.model, self.model_info = load_model(model_path, self.env)
-        # self.MODEL_PATH = model_path
-
+    def __init__(self, grid_shape: Tuple[int, int], model_path: str) -> None:
+        super().__init__(grid_shape)
+        
+        import ai.envs
         ignore_logs()
+        env = gym.make("envs/AppleGame-v0", render_mode="ansi", rows=grid_shape[0], cols=grid_shape[1])
+        self.env = cast(AppleGameEnv, wrap_with_mask(env))
+        self.model, self.model_info = load_model(model_path, self.env)
+
 
     def get_info(self) -> AIInfo:
         return self.model_info
-    
-    def set_board(self) -> None:
-        self.env.reset()
 
-    def run_episode(self, render: bool, delay: float = 0.5):
-        obs, info = self.env.reset("시드 혹은 init board로 초기화") # type: ignore
+    def run_episode(self, board_source, render, delay):
+        obs, info = self.env.reset(options={"board_source": board_source})
         terminated = truncated = False
         steps = 0
         score = info.get("score", 0)
@@ -35,7 +36,7 @@ class AIAgent(Agent):
         if render: self.env.render()
         while not (terminated or truncated):
             if is_action_masking:
-                action_masks = cast(AppleGameEnv, self.env.unwrapped).get_action_mask()  # type: ignore
+                action_masks = cast(AppleGameEnv, self.env.unwrapped).get_action_mask()
                 if not action_masks.any(): break  # 유효한 수 없음 -> 종료
                 action, _ = self.model.predict(obs, action_masks=action_masks, deterministic=True)
             else:
@@ -46,7 +47,7 @@ class AIAgent(Agent):
             score = info.get("score", score)
 
             if render:
-                print(f"[step {steps:>3}] reward={reward:>5.1f}  score={score}")
+                print(f"\n[step {steps:>3}] reward={reward:>5.1f}  score={score}")
                 self.env.render()
                 if delay > 0: time.sleep(delay)
 

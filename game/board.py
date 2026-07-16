@@ -25,8 +25,8 @@ class Board():
         self._update_valid_actions()
 
     @classmethod
-    def from_board(cls, _board: NDArray[np.int8]):
-        return cls(_board)
+    def from_board(cls, board: NDArray[np.int8]):
+        return cls(board)
 
     @classmethod
     def from_seed(cls, size: Tuple[int, int], seed: int | None = None):
@@ -40,14 +40,20 @@ class Board():
     def _update_sum_prefix(self) -> None:
         self._sum_prefix = compute_prefix_sum(self.grid)
 
-    def do_action(self, action: Action) -> bool:
+
+    def do_action(self, action: Action) -> Tuple[bool, int]:
         if not self.is_valid_action(action):
-            return False
+            return (False, 0)
+        
         (r1, c1), (r2, c2) = action.top_left, action.bottom_right
-        self.grid[r1:r2+1, c1:c2+1] = 0
+        region = self.grid[r1:r2+1, c1:c2+1]
+        count = int(np.count_nonzero(region))
+        region[:] = 0
+
         self._update_sum_prefix()
-        self._update_valid_actions()  # 추가: 그리드 변경 시에만 재계산
-        return True
+        self._update_valid_actions()
+        
+        return (True, count)
 
     def _get_area_sum(self, top_left: tuple[int, int], bottom_right: tuple[int, int]) -> int:
         (r1, c1), (r2, c2) = top_left, bottom_right
@@ -119,7 +125,7 @@ class Board():
 
         return (is_over, is_all_clear)
     
-    def slice_area(self, action: Action) -> NDArray[np.int8]:
-        r1, c1 = action.top_left
-        r2, c2 = action.bottom_right
-        return self.grid[r1:r2+1, c1:c2+1]
+    # def slice_area(self, action: Action) -> NDArray[np.int8]:
+    #     r1, c1 = action.top_left
+    #     r2, c2 = action.bottom_right
+    #     return self.grid[r1:r2+1, c1:c2+1]

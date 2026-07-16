@@ -1,6 +1,8 @@
 from ai.envs.apple_env import AppleGameEnv
 from game.board import Board
 
+import numpy as np
+from numpy.typing import NDArray
 from typing import Tuple, Any
 from abc import ABC, abstractmethod
 from dataclasses import fields
@@ -9,7 +11,7 @@ from dataclasses import fields
 # from agents.algorithm.agent import AlgoInfo
 
 class Agent(ABC):
-    def __init__(self, env: AppleGameEnv) -> None:
+    def __init__(self, grid_shape: Tuple[int, int]) -> None:
         super().__init__()
 
     @abstractmethod
@@ -20,14 +22,7 @@ class Agent(ABC):
         pass
 
     @abstractmethod
-    def set_board(self) -> None:
-        """
-        Env에 대한 board 설정(변경).
-        """
-        pass
-
-    @abstractmethod
-    def run_episode(self, render: bool, delay: float) -> Tuple[int, int]:
+    def run_episode(self, board_source: int|list[int]|NDArray[np.int8], render: bool, delay: float) -> Tuple[int, int]:
         """
         에피소드 1회 실행. (steps, score) 반환.
 

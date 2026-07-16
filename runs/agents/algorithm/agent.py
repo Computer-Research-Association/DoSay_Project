@@ -5,6 +5,8 @@ from ai.envs.apple_env import AppleGameEnv
 
 import time
 import gymnasium as gym
+import numpy as np
+from numpy.typing import NDArray
 from typing import cast, Tuple
 from dataclasses import dataclass, field
 
@@ -21,9 +23,8 @@ class AlgoInfo:
 
 
 class AlgoAgent(Agent):
-    def __init__(self, env: AppleGameEnv, model_path: str) -> None:
-        super().__init__(env)
-        self.env = env
+    def __init__(self, grid_shape: Tuple[int, int], custom_param_gogo: str) -> None:
+        super().__init__(grid_shape)
 
     def get_info(self) -> AlgoInfo:
         return AlgoInfo() # type: ignore
@@ -31,5 +32,5 @@ class AlgoAgent(Agent):
     def set_board(self) -> None:
         pass
     
-    def run_episode(self, render: bool, delay: float) -> Tuple[int, int]: 
+    def run_episode(self, board_source, render, delay) -> Tuple[int, int]: 
         return (0, 0)
