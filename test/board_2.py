@@ -18,7 +18,7 @@ apple_grid = np.array([
     ])
 
 
-board = Board(init_board=apple_grid)
+board = Board.from_board(apple_grid)
 
 board.print_board()
 

@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import numpy as np
 from numpy.typing import NDArray
 from .action import Action
@@ -10,55 +12,54 @@ def compute_prefix_sum(grid: NDArray) -> NDArray:
     return prefix
 
 class Board():
-    def __init__(self, init_board: NDArray[np.int8] | None = None, board_size: tuple[int, int] | None = None, seed = None):
-        self.rng = np.random.default_rng(seed)
-        self.sum_prefix: NDArray[np.int32]
-        self.grid: NDArray[np.int8]
-        self.size: tuple[int, int]
+    def __init__(self, _grid: NDArray[np.int8]):
+        """직접 호출하지 말고 from_seed/from_seed 사용"""
+        self.grid: NDArray[np.int8] = _grid.astype(np.int8).copy()
+        self.size: Tuple[int, int] = _grid.shape
+
+        sum_prefix_size = (self.size[0]+1, self.size[1]+1)
+        self._sum_prefix: NDArray[np.int32] = np.empty(sum_prefix_size, dtype=np.int32)
+        self._update_sum_prefix()
+        
         self._valid_actions_cache: list[Action]
+        self._update_valid_actions()
 
-        if init_board is None and board_size is None:
-            raise Exception("Both board_size and init_board cannot be None.")
-        elif init_board is None:
-            self.size = board_size # type: ignore
-            self.grid = _generate_board(self.size, self.rng)
-        elif board_size is None:
-            self.size = init_board.shape
-            self.grid = init_board.astype(np.int8).copy()
-        else:
-            if init_board.shape != board_size:
-                raise Exception("board_size does not match init_board.size.")
-            self.size = board_size
-            self.grid = init_board.astype(np.int8).copy()
+    @classmethod
+    def from_board(cls, _board: NDArray[np.int8]):
+        return cls(_board)
 
-        R, C = self.size
-        self.sum_prefix = np.empty((R+1, C+1), dtype=np.int32)
-        self._update_prefix()
-        self._valid_actions_cache = self._compute_valid_actions()
+    @classmethod
+    def from_seed(cls, size: Tuple[int, int], seed: int | None = None):
+        rng = np.random.default_rng(seed)
+        _board = rng.integers(1, 10, size=size, dtype=np.int8)
+        return cls(_board)
 
+    def get_sum_prefix(self) -> NDArray[np.int32]:
+        return self._sum_prefix
 
-    def _update_prefix(self):
-        self.sum_prefix = compute_prefix_sum(self.grid)
+    def _update_sum_prefix(self) -> None:
+        self._sum_prefix = compute_prefix_sum(self.grid)
 
-    def do_action(self, action: Action) -> None:
-        # if not self.is_valid_action(action):
-        #     return False
+    def do_action(self, action: Action) -> bool:
+        if not self.is_valid_action(action):
+            return False
         (r1, c1), (r2, c2) = action.top_left, action.bottom_right
         self.grid[r1:r2+1, c1:c2+1] = 0
-        self._update_prefix()
-        self._valid_actions_cache = self._compute_valid_actions()  # 추가: 그리드 변경 시에만 재계산
+        self._update_sum_prefix()
+        self._update_valid_actions()  # 추가: 그리드 변경 시에만 재계산
+        return True
 
     def _get_area_sum(self, top_left: tuple[int, int], bottom_right: tuple[int, int]) -> int:
         (r1, c1), (r2, c2) = top_left, bottom_right
-        return (self.sum_prefix[r2 + 1, c2 + 1]
-                - self.sum_prefix[r1, c2 + 1]
-                - self.sum_prefix[r2 + 1, c1]
-                + self.sum_prefix[r1, c1])
+        return (self._sum_prefix[r2 + 1, c2 + 1]
+                - self._sum_prefix[r1, c2 + 1]
+                - self._sum_prefix[r2 + 1, c1]
+                + self._sum_prefix[r1, c1])
 
     def get_valid_actions(self) -> list[Action]:
         return self._valid_actions_cache
 
-    def _compute_valid_actions(self) -> list[Action]:
+    def _update_valid_actions(self) -> None:
         valid_actions = []
         for r1 in range(self.size[0]):
             for r2 in range(r1, self.size[0]):
@@ -73,7 +74,9 @@ class Board():
                                 continue
                         elif area_sum > 10:
                             break
-        return valid_actions
+
+        self._valid_actions_cache = valid_actions
+
     
     def is_smallest_action(self, top_left: tuple[int, int], bottom_right: tuple[int, int]) -> bool:
         (r1, c1), (r2, c2) = top_left, bottom_right
@@ -116,10 +119,7 @@ class Board():
 
         return (is_over, is_all_clear)
     
-    def slice_area(self, action: "Action") -> NDArray:
+    def slice_area(self, action: Action) -> NDArray[np.int8]:
         r1, c1 = action.top_left
         r2, c2 = action.bottom_right
         return self.grid[r1:r2+1, c1:c2+1]
-    
-def _generate_board(size, rng) -> NDArray[np.int8]:
-    return rng.integers(1, 10, size=size, dtype=np.int8)

@@ -4,7 +4,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from game import Board
 
-board = Board(board_size=(9, 18), seed=0)
+board = Board.from_seed(size=(9, 18), seed=0)
 
 random.seed(0)
 start = time.time()

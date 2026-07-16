@@ -55,7 +55,7 @@ class Simulator:
         all_clear_count = 0
 
         for _ in range(n_games):
-            result = self.play_game(Board(board_size=BOARD_SIZE))
+            result = self.play_game(Board.from_seed(size=BOARD_SIZE, seed = None))
             scores.append(result.score)
             turns.append(result.turn)
             times.append(result.time)

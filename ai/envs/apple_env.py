@@ -64,11 +64,11 @@ class AppleGameEnv(gym.Env):
     def reset(self, *, seed=None, options=None):
         super().reset(seed=seed)
         if options and "init_board" in options.keys():
-            self.board = Board(init_board=options["init_board"], seed=seed)
+            self.board = Board.from_board(options["init_board"])
         else:
-            self.board = Board(board_size=(self.row_num, self.col_num), seed=seed)
+            self.board = Board.from_seed((self.row_num, self.col_num), seed)
+        
         self._score = 0
-
         obs = self._get_obs()
         info = self._get_info()
         
@@ -80,17 +80,15 @@ class AppleGameEnv(gym.Env):
     def step(self, action: int):  # action_idx -> action
         act = self.index_to_action[action]
         (r1, c1), (r2, c2) = act.top_left, act.bottom_right
-
-        if not self.board.is_valid_action(action=act): # 로직상 도달하면 안되긴 함
+        
+        is_valid = self.board.do_action(act)
+        if not is_valid:
             # print("경고: 로직상 도달하면 안되는 영역의 코드가 작동됨. [ ai > env > step() > valid ]")
             obs = self._get_obs()
             info = self._get_info()
             return obs, -1.0, False, False, info
 
-        
         remove_count = int(np.count_nonzero(self.board.grid[r1 : r2 + 1, c1 : c2 + 1]))
-        self.board.do_action(act)
-
         reward = (remove_count/self.total_cell_count) * constants.STEP_REWARD_TOTAL
         self._score += remove_count
 
