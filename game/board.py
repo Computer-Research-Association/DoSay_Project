@@ -90,11 +90,13 @@ class Board():
 
         return True
     
-    # def is_valid_action(self, action: Action) -> bool:
-    #     area = self.get_area(action)
-    #     action_valid = area.sum() == 10
+    def is_valid_action(self, action: Action) -> bool:
+        (r1, c1), (r2, c2) = action.top_left, action.bottom_right
 
-    #     return action_valid
+        area = self.grid[r1:r2+1, c1:c2+1]
+        action_valid = area.sum() == 10
+
+        return action_valid
     
     def print_board(self):
         for line in self.grid:

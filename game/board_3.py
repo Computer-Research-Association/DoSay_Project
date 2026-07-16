@@ -22,4 +22,4 @@ end = time.time()
 
 print("GAME OVER!")
 print(f"time elapsed: {(end-start):.3f}s")
-print(f"LEFT APPLE: {np.count_nonzero(board.grid != 0)}")
+print(f"SCORE: {np.count_nonzero(board.grid)}")
