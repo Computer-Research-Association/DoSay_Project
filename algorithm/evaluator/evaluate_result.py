@@ -41,6 +41,22 @@ class EvaluateSummary: # 시뮬레이션을 N회 반복한 결과 지표
         self.clear_rate = clear_rate
         self.weights = weights
 
+    def __repr__(self) -> str:
+        return (
+            "EvaluateSummary(\n"
+            f"  n_games         : {self.n_games}\n"
+            f"  max / min score : {self.max_score} / {self.min_score}\n"
+            f"  avg score       : {self.avg_score:.2f}\n"
+            f"  std score       : {self.std_score:.2f}\n"
+            f"  avg turn        : {self.avg_turn:.2f}\n"
+            f"  avg time (s)    : {self.avg_time:.4f}\n"
+            f"  avg score ratio : {self.avg_max_score_ratio:.3f}\n"
+            f"  clear rate      : {self.clear_rate:.2%}\n"
+            f"  weights         : {self.weights}\n"
+            ")"
+        )
+    
+
     
 
 
