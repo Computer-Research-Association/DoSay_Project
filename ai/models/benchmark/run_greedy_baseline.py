@@ -5,10 +5,6 @@
 #   - greedy_min : 매 수 '가장 적게 지우는' 사각형 선택 (조합 보존 성향)
 # 학습된 정책이 greedy_min조차 못 넘는다면 아직 단순 휴리스틱 수준이라는 뜻이고,
 # 넘는다면 실제로 비자명한 전략을 배운 것.
-import os, sys
-ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-sys.path.append(ROOT)
-
 import numpy as np
 import gymnasium as gym
 import ai.envs

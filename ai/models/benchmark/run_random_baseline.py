@@ -1,7 +1,3 @@
-import os, sys
-ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.append(ROOT)
-
 import numpy as np
 import gymnasium as gym
 import ai.envs

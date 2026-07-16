@@ -1,7 +1,5 @@
-import os, sys, random, time
+import random, time
 import numpy as np
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from game import Board
 
 board = Board.from_seed(size=(9, 18), seed=0)

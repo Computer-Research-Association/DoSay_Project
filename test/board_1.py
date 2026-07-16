@@ -1,6 +1,3 @@
-import os, sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from game import Board, Action
 
 board = Board.from_seed(size=(9, 18), seed = None)
