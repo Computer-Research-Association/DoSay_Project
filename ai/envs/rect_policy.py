@@ -1,4 +1,4 @@
-# action <-> obs 연결 관련.
+# ai/envs/rect_policy.py
 import torch
 import torch.nn as nn
 from sb3_contrib.common.maskable.policies import MaskableActorCriticPolicy
@@ -68,6 +68,10 @@ class RectangleMaskablePolicy(MaskableActorCriticPolicy):
         assert self.mlp_extractor.latent_dim_pi == fe.features_dim, \
             "net_arch의 pi는 반드시 빈 리스트([])여야 합니다."
 
-        self.action_net = RectangleHead(fe.rows, fe.cols, fe.embed_dim, self._actions, self._head_dim) # type: ignore
+        self.action_net = RectangleHead(
+            fe.rows, fe.cols, fe.embed_dim, self._actions, self._head_dim
+        )
         # action_net을 교체했으므로 옵티마이저 재생성 (새 파라미터 포함, 기존 Linear 제외)
-        self.optimizer = self.optimizer_class(self.parameters(), lr=lr_schedule(1), **self.optimizer_kwargs)  # type: ignore
+        self.optimizer = self.optimizer_class(
+            self.parameters(), lr=lr_schedule(1), **self.optimizer_kwargs
+        )

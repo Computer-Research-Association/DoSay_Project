@@ -112,7 +112,7 @@ class AppleGameEnv(gym.Env):
     def render(self):
         if self.render_mode in self.metadata["render_modes"]:
             if self.render_mode == "ansi":
-                self.board.print_board()
+                self.board.print_board(True)
                 print("\nscore:", self._score)
             if self.render_mode == "None":
                 return None

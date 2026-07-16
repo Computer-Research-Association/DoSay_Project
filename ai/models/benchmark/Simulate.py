@@ -14,7 +14,7 @@ from ai.wrappers.action_mask import wrap_with_mask
 
 
 # ── 설정 ─────────────────────────────────────────────────────────────
-MODEL_PATH = "ai/MaskablePPO_V5.0_10000000.zip"
+MODEL_PATH = "ai/MaskablePPO_V5.1_10000000.zip"
 ROWS, COLS = 9, 18
 
 SHOW_TRACE  = True
