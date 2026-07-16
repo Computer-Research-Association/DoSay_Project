@@ -42,7 +42,7 @@ class FeatureContext:
         if self._area is None:
             r1, c1 = self.action.top_left
             r2, c2 = self.action.bottom_right
-            self._area = self.grid[r1:r2+1, c1:c2+1]
+            self._area = self.board_array[r1:r2+1, c1:c2+1]
         return self._area
 
 
