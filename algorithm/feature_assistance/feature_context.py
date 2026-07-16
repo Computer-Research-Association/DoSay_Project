@@ -47,8 +47,8 @@ class FeatureContext:
 
 
     @classmethod 
-    def from_board(cls, board_array, action) -> "FeatureContext":
+    def from_board(cls, board_array, action, valid_actions) -> "FeatureContext":
         prefix = compute_prefix_sum(board_array)
         counts = {v: int((board_array == v).sum()) for v in range(1, 10)}
         board_obj = Board(init_board = board_array)
-        return cls(board_array=board_array, board_obj = board_obj, prefix = prefix, count_by_value = counts, action = action )
+        return cls(board_array=board_array, board_obj = board_obj, prefix = prefix, count_by_value = counts, action = action, _valid_actions = valid_actions)
