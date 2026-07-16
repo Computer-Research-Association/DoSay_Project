@@ -11,7 +11,6 @@ from game.board import Board
 @dataclass 
 class FeatureContext:
     board_array: NDArray[np.int8] # 숫자 배열의 좌푯값
-    board_obj : Board #Board 인스턴트
     prefix: NDArray  # 누적합
     count_by_value: dict[int, int]  #숫자별 남아있는 개수
     action : Action
@@ -19,7 +18,6 @@ class FeatureContext:
 
     _area: NDArray | None = field(default= None, repr = False)
     _board_after_action : NDArray | None = field(default= None, repr = False)
-    _board_obj: "Board | None" = field(default=None, repr = False)
     _valid_actions: list | None = field(default=None, repr=False)
 
     @property
@@ -42,7 +40,9 @@ class FeatureContext:
     @property
     def area(self):
         if self._area is None:
-            self._area = self.board_obj.slice_area(self.action)
+            r1, c1 = self.action.top_left
+            r2, c2 = self.action.bottom_right
+            self._area = self.grid[r1:r2+1, c1:c2+1]
         return self._area
 
 
@@ -50,5 +50,4 @@ class FeatureContext:
     def from_board(cls, board_array, action, valid_actions) -> "FeatureContext":
         prefix = compute_prefix_sum(board_array)
         counts = {v: int((board_array == v).sum()) for v in range(1, 10)}
-        board_obj = Board(init_board = board_array)
-        return cls(board_array=board_array, board_obj = board_obj, prefix = prefix, count_by_value = counts, action = action, _valid_actions = valid_actions)
+        return cls(board_array=board_array, prefix = prefix, count_by_value = counts, action = action, _valid_actions = valid_actions)
