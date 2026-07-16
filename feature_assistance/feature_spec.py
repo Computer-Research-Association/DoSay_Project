@@ -11,8 +11,7 @@ class FeatureSpec:
 
 FEATURES = [
     FeatureSpec("remove_nine", features.feature_remove_nine, weight = 1.0),
-    FeatureSpec("start_at_middle", features.feature_start_at_middle, weight = 1.0),
-    FeatureSpec("start_at_side", features.feature_start_at_side, weight = 1.0),
-    
+    FeatureSpec("remove_eight", features.feature_remove_eight, weight = 1.0),
+    FeatureSpec("grouping", features.feature_remove_the_most_grouping, weight = 1.0),
 ]
 
