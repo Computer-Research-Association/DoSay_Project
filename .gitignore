@@ -1,5 +1,7 @@
 # Custom
 ai/*.zip
+ai/checkpoints/
+ai/models/old/
 ai/logs/
 
 # Byte-compiled / optimized / DLL files

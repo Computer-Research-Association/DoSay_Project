@@ -98,9 +98,13 @@ class Board():
 
         return action_valid
     
-    def print_board(self):
-        for line in self.grid:
-            print(*(f"{v:1d}" for v in line))
+    def print_board(self, hideZero: bool = True):
+        if hideZero:
+            for line in self.grid:
+                print(*(" " if v == 0 else f"{v:1d}" for v in line))
+        else:
+            for line in self.grid:
+                print(*(f"{v:1d}" for v in line))
 
     def is_done(self) -> tuple[bool, bool]:
         actions = self.get_valid_actions()
