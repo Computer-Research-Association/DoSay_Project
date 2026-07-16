@@ -116,5 +116,10 @@ class Board():
 
         return (is_over, is_all_clear)
     
+    def slice_area(self, action: "Action") -> NDArray:
+        r1, c1 = action.top_left
+        r2, c2 = action.bottom_right
+        return self.grid[r1:r2+1, c1:c2+1]
+    
 def _generate_board(size, rng) -> NDArray[np.int8]:
     return rng.integers(1, 10, size=size, dtype=np.int8)

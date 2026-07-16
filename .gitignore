@@ -1,6 +1,7 @@
 # Custom
 ai/checkpoints
 ai/*.zip
+ai/logs/
 /checkpoints/
 *.txt
 
