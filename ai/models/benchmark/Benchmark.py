@@ -12,7 +12,7 @@ import ai.envs
 from ai.wrappers.action_mask import wrap_with_mask
 
 MODEL_PATH = "ai/MaskablePPO_V5.1_10000000.zip"
-N_EPISODES = 100
+N_EPISODES = 10000
 BASE_SEED  = 1234
 ROWS, COLS = 9, 18
 

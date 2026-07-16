@@ -4,4 +4,3 @@ from dataclasses import dataclass
 class Action:
     top_left: tuple[int, int]
     bottom_right: tuple[int, int]
-
