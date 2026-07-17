@@ -1,10 +1,3 @@
-import os, sys
-
-ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-print(ROOT)
-if ROOT not in sys.path:
-    sys.path.append(ROOT)
-
 import numpy as np
 import gymnasium as gym
 from Common import load_model, run_episode, format_model_info, quiet_logs

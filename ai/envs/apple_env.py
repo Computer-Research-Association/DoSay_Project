@@ -21,7 +21,10 @@ def get_all_action(rows, cols) -> list[Action]:
 
 
 class AppleGameEnv(gym.Env):
-    metadata = {"render_modes": ["ansi", "None"]} # "human" 은 추후 개발
+    metadata = {
+        "render_modes": ["ansi", "None"], # "human" 은 추후 개발
+    }
+
 
     def __init__(self, rows: int, cols: int, render_mode: str | None = None):
         self.row_num = rows
@@ -61,13 +64,21 @@ class AppleGameEnv(gym.Env):
             "score": self._score
         }
     
+
     def reset(self, *, seed=None, options=None):
         super().reset(seed=seed)
-        if options and "init_board" in options.keys():
-            self.board = Board.from_board(options["init_board"])
+        options = options or {}
+        shape = (self.row_num, self.col_num)
+
+        board_source = options.get("board_source")
+
+        if isinstance(board_source, (np.ndarray, list, tuple)):
+            self.board = Board.from_board(np.asarray(board_source, dtype=np.int8))
+        elif board_source is None or isinstance(board_source, int):
+            self.board = Board.from_seed(shape, board_source)
         else:
-            self.board = Board.from_seed((self.row_num, self.col_num), seed)
-        
+            raise TypeError(f"board_source must be ndarray, list, or int, got {type(board_source).__name__}")
+
         self._score = 0
         obs = self._get_obs()
         info = self._get_info()
@@ -77,18 +88,16 @@ class AppleGameEnv(gym.Env):
 
         return obs, info
 
+
     def step(self, action: int):  # action_idx -> action
-        act = self.index_to_action[action]
-        (r1, c1), (r2, c2) = act.top_left, act.bottom_right
-        
-        is_valid = self.board.do_action(act)
+        act = self.index_to_action[action]        
+        is_valid, remove_count = self.board.do_action(act)
         if not is_valid:
             # print("경고: 로직상 도달하면 안되는 영역의 코드가 작동됨. [ ai > env > step() > valid ]")
             obs = self._get_obs()
             info = self._get_info()
             return obs, -1.0, False, False, info
 
-        remove_count = int(np.count_nonzero(self.board.grid[r1 : r2 + 1, c1 : c2 + 1]))
         reward = (remove_count/self.total_cell_count) * constants.STEP_REWARD_TOTAL
         self._score += remove_count
 
@@ -111,7 +120,6 @@ class AppleGameEnv(gym.Env):
         if self.render_mode in self.metadata["render_modes"]:
             if self.render_mode == "ansi":
                 self.board.print_board(True)
-                print("\nscore:", self._score)
             if self.render_mode == "None":
                 return None
         return None

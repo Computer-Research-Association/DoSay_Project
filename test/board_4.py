@@ -2,9 +2,7 @@
 중복 수 걸러지는지 확인하기 위해 수 개수 테스트
 """
 
-import os, sys, random, time
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
+import random, time
 from game import Board
 
 board = Board.from_seed(size=(9, 18), seed=0)

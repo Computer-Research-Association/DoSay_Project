@@ -1,8 +1,3 @@
-import os, sys
-ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.append(ROOT)
-
-
 import gymnasium as gym
 # from ai.envs.apple_env import AppleGameEnv
 from stable_baselines3 import DQN

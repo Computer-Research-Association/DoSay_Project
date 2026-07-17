@@ -1,8 +1,4 @@
-# ai/models/train_MaskablePPO.py  (V5)
-import os, sys
-ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.append(ROOT)
-
+import os
 import gymnasium as gym
 import ai.envs
 from ai.envs.apple_env import get_all_action
@@ -22,7 +18,6 @@ CHECKPOINT_TIMESTEP = 100_000
 ROWS, COLS = 9, 18
 
 N_ENVS = max(1, (os.cpu_count() or 0) - 1)
-
 
 def _env():
     def _init():
