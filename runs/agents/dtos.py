@@ -11,3 +11,14 @@ class AIInfo:
     model_act: str            = field(metadata={"label": "Act space"})
     total_train_steps: int    = field(metadata={"label": "Train steps"})
     use_action_masking: bool  = field(metadata={"label": "Maskable"})
+
+
+@dataclass
+class AlgoInfo:
+    algorithm_name: str
+    heuristic_name: str  # 사용한 휴리스틱 종류
+    agent_version: str
+    source_path: str
+    beam_width: int  # 빔서치 폭
+    max_depth: int  # 탐색 깊이
+    time_limit_sec: int
