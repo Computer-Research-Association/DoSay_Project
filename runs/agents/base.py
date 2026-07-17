@@ -34,8 +34,9 @@ class Agent(ABC):
 
 
     # 일반 메소드, 구현 필요x
-    def format_info(self, info):
-        rows = [(f.metadata.get("label", f.name), _format_value(getattr(self, f.name))) for f in fields(info)]
+    def get_info_formatted(self):
+        info = self.get_info()
+        rows = [(f.metadata.get("label", f.name), _format_value(getattr(info, f.name))) for f in fields(info)]
 
         label_width = max(len(label) for label, _ in rows)
         value_width = max(len(value) for _, value in rows)
