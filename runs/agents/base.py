@@ -1,6 +1,4 @@
 from agents.utils import format_box
-from ai.envs.apple_env import AppleGameEnv
-from game.board import Board
 
 import numpy as np
 from numpy.typing import NDArray

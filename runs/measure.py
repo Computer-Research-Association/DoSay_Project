@@ -2,7 +2,6 @@ import os
 import time
 from pathlib import Path
 from agents.selector import select_agent
-from agents.ai.agent import AIAgent
 from system_info import format_system_info
 
 os.chdir(Path(__file__).parent)  # cwd를 runs/ 로 변경

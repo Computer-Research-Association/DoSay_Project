@@ -1,7 +1,3 @@
-from game.board import Board
-
-from ai.envs.apple_env import AppleGameEnv
-
 from agents.base import Agent
 from agents.dtos import AlgoInfo
 

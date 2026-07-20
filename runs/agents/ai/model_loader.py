@@ -1,4 +1,3 @@
-import os
 import re
 import importlib
 from pathlib import Path
@@ -21,7 +20,7 @@ MODEL_REGISTRY = {
 _NAME_PATTERN = re.compile(r"^(?P<name>.+)_V(?P<version>[\d.]+)_(?P<steps>\d+)$")
 
 def _parse_filename(path: Path) -> AIInfo:
-    stem = path.stem #os.path.splitext(os.path.basename(path.replace("\\", "/")))[0]
+    stem = path.stem
 
     m = _NAME_PATTERN.match(stem)
     if not m:
@@ -56,8 +55,6 @@ def load_model(path: Path, env: AppleGameEnv, device: str = "cpu"):
     module_name, class_name, _ = MODEL_REGISTRY[info.model_name]
     cls = getattr(importlib.import_module(module_name), class_name)
     model = cls.load(path, env=env, device=device)
-
-    # device = str(getattr(model, "device", "?"))
 
     info.model_policy = type(getattr(model, "policy", model)).__name__
     info.model_obs = getattr(model, "observation_space", "?")
