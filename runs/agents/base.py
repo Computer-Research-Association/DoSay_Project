@@ -1,3 +1,4 @@
+from agents.utils import format_box
 from ai.envs.apple_env import AppleGameEnv
 from game.board import Board
 
@@ -30,23 +31,14 @@ class Agent(ABC):
         """
         pass
 
-    def get_info_formatted(self):
+    def get_info_formatted(self) -> str:
         info = self.get_info()
         rows = [(f.metadata.get("label", f.name), _format_value(getattr(info, f.name))) for f in fields(info)]
 
         label_width = max(len(label) for label, _ in rows)
-        value_width = max(len(value) for _, value in rows)
-        inner_width = label_width + len('" : "') + value_width
+        lines = [f"{label:<{label_width}} : {value}" for label, value in rows]
 
-        header = "┌─ Agent Info " + "─" * max(0, inner_width - len("Agent Info") + 1)
-        footer = "└" + "─" * (len(header) - 1)
-
-        lines = [header]
-        for label, value in rows:
-            lines.append(f"│ {label:<{label_width}} : {value}")
-        lines.append(footer)
-
-        return "\n".join(lines)
+        return format_box("Agent Info", lines)
 
 def _format_value(value) -> str:
     if isinstance(value, bool):
