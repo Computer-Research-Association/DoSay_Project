@@ -1,15 +1,17 @@
 from game.board import Board
-from runs.agents.base import Agent
 
 from ai.envs.apple_env import AppleGameEnv
 
+from agents.base import Agent
 from agents.dtos import AlgoInfo
-from typing import cast, Tuple
+
+from pathlib import Path
+from typing import Tuple
 
 
 class AlgoAgent(Agent):
-    def __init__(self, grid_shape: Tuple[int, int], custom_param_gogo: str) -> None:
-        super().__init__(grid_shape)
+    def __init__(self, grid_shape: Tuple[int, int], model_path: Path) -> None:
+        super().__init__(grid_shape, model_path)
 
     def get_info(self) -> AlgoInfo:
         return AlgoInfo() # type: ignore

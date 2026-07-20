@@ -1,13 +1,19 @@
+import os
 import time
+from pathlib import Path
+from agents.selector import select_agent
 from agents.ai.agent import AIAgent
 
-MODEL_PATH = "ai/MaskablePPO_V5.1_10000000.zip"
+os.chdir(Path(__file__).parent)  # cwd를 runs/ 로 변경
+AGENTS_DIR = (Path(__file__).parent / "agents")
 N_EPISODES = 10000
 BASE_SEED  = 1234
 ROWS, COLS = 9, 18
 
+
 def main():
-    agent = AIAgent((ROWS, COLS), MODEL_PATH)
+    agent_cls, model_path = select_agent(AGENTS_DIR)
+    agent = agent_cls((ROWS, COLS), model_path)
     print(agent.get_info_formatted())
     print(f"\nRunning {N_EPISODES} episodes ...\n")
     start_time = time.time()
@@ -33,10 +39,6 @@ def main():
     print(f" time elapsed : {int(time_elapsed)}s (avg {time_elapsed / n:.2f})")
     print("────────────────────────────────────────────")
 
-def select_agent_type():
-    tag_list = ['ai', 'algorithm']
-    for i in range(len(tag_list)):
-        tag = tag_list[i]
 
 if __name__ == "__main__":
     main()

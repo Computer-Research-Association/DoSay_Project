@@ -3,15 +3,13 @@ from game.board import Board
 
 import numpy as np
 from numpy.typing import NDArray
+from pathlib import Path
 from typing import Tuple, Any
 from abc import ABC, abstractmethod
 from dataclasses import fields
 
-# from agents.ai.agent import AIInfo
-# from agents.algorithm.agent import AlgoInfo
-
 class Agent(ABC):
-    def __init__(self, grid_shape: Tuple[int, int]) -> None:
+    def __init__(self, grid_shape: Tuple[int, int], model_path: Path) -> None:
         super().__init__()
 
     @abstractmethod
@@ -32,8 +30,6 @@ class Agent(ABC):
         """
         pass
 
-
-    # 일반 메소드, 구현 필요x
     def get_info_formatted(self):
         info = self.get_info()
         rows = [(f.metadata.get("label", f.name), _format_value(getattr(info, f.name))) for f in fields(info)]
@@ -51,10 +47,6 @@ class Agent(ABC):
         lines.append(footer)
 
         return "\n".join(lines)
-
-
-    # def breathe(self):
-    #     print("숨을 쉽니다.")
 
 def _format_value(value) -> str:
     if isinstance(value, bool):

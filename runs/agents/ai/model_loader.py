@@ -1,6 +1,7 @@
 import os
 import re
 import importlib
+from pathlib import Path
 from agents.dtos import AIInfo
 from ai.envs.apple_env import AppleGameEnv
 
@@ -19,8 +20,8 @@ MODEL_REGISTRY = {
 
 _NAME_PATTERN = re.compile(r"^(?P<name>.+)_V(?P<version>[\d.]+)_(?P<steps>\d+)$")
 
-def _parse_filename(path: str) -> AIInfo:
-    stem = os.path.splitext(os.path.basename(path.replace("\\", "/")))[0]
+def _parse_filename(path: Path) -> AIInfo:
+    stem = path.stem #os.path.splitext(os.path.basename(path.replace("\\", "/")))[0]
 
     m = _NAME_PATTERN.match(stem)
     if not m:
@@ -39,9 +40,10 @@ def _parse_filename(path: str) -> AIInfo:
     _, _, maskable = MODEL_REGISTRY[name]
 
     return AIInfo(
+        model_type="AI",
         model_name=name,
         agent_version=m.group("version"),
-        source_path=path,
+        source_path=path.relative_to(Path.cwd()),
         model_policy="-1",
         model_obs="-1",
         model_act="-1",
@@ -49,7 +51,7 @@ def _parse_filename(path: str) -> AIInfo:
         use_action_masking=maskable
     )
 
-def load_model(path: str, env: AppleGameEnv, device: str = "cpu"):
+def load_model(path: Path, env: AppleGameEnv, device: str = "cpu"):
     info = _parse_filename(path)
     module_name, class_name, _ = MODEL_REGISTRY[info.model_name]
     cls = getattr(importlib.import_module(module_name), class_name)
