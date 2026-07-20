@@ -1,17 +1,14 @@
-from ai.envs.apple_env import AppleGameEnv
-from game.board import Board
+from agents.utils import format_box
 
 import numpy as np
 from numpy.typing import NDArray
+from pathlib import Path
 from typing import Tuple, Any
 from abc import ABC, abstractmethod
 from dataclasses import fields
 
-# from agents.ai.agent import AIInfo
-# from agents.algorithm.agent import AlgoInfo
-
 class Agent(ABC):
-    def __init__(self, grid_shape: Tuple[int, int]) -> None:
+    def __init__(self, grid_shape: Tuple[int, int], model_path: Path) -> None:
         super().__init__()
 
     @abstractmethod
@@ -32,28 +29,14 @@ class Agent(ABC):
         """
         pass
 
-
-    # 일반 메소드, 구현 필요x
-    def format_info(self, info):
-        rows = [(f.metadata.get("label", f.name), _format_value(getattr(self, f.name))) for f in fields(info)]
+    def get_info_formatted(self) -> str:
+        info = self.get_info()
+        rows = [(f.metadata.get("label", f.name), _format_value(getattr(info, f.name))) for f in fields(info)]
 
         label_width = max(len(label) for label, _ in rows)
-        value_width = max(len(value) for _, value in rows)
-        inner_width = label_width + len('" : "') + value_width
+        lines = [f"{label:<{label_width}} : {value}" for label, value in rows]
 
-        header = "┌─ Agent Info " + "─" * max(0, inner_width - len("Agent Info") + 1)
-        footer = "└" + "─" * (len(header) - 1)
-
-        lines = [header]
-        for label, value in rows:
-            lines.append(f"│ {label:<{label_width}} : {value}")
-        lines.append(footer)
-
-        return "\n".join(lines)
-
-
-    # def breathe(self):
-    #     print("숨을 쉽니다.")
+        return format_box("Agent Info", lines)
 
 def _format_value(value) -> str:
     if isinstance(value, bool):

@@ -72,14 +72,16 @@ class AppleGameEnv(gym.Env):
 
         board_source = options.get("board_source")
 
-        if isinstance(board_source, (np.ndarray, list, tuple)):
-            self.board = Board.from_board(np.asarray(board_source, dtype=np.int8))
+        if isinstance(board_source, (np.ndarray, list)):
+            _board = np.asarray(board_source, dtype=np.int8)
+            self.board = Board.from_board(_board)
+            self._score = _board.size - np.count_nonzero(_board)
         elif board_source is None or isinstance(board_source, int):
             self.board = Board.from_seed(shape, board_source)
+            self._score = 0
         else:
             raise TypeError(f"board_source must be ndarray, list, or int, got {type(board_source).__name__}")
 
-        self._score = 0
         obs = self._get_obs()
         info = self._get_info()
         

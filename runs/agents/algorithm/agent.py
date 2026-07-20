@@ -1,30 +1,13 @@
-from game.board import Board
-from runs.agents.base import Agent
+from agents.base import Agent
+from agents.dtos import AlgoInfo
 
-from ai.envs.apple_env import AppleGameEnv
-
-import time
-import gymnasium as gym
-import numpy as np
-from numpy.typing import NDArray
-from typing import cast, Tuple
-from dataclasses import dataclass, field
-
-
-@dataclass
-class AlgoInfo:
-    algorithm_name: str
-    heuristic_name: str  # 사용한 휴리스틱 종류
-    agent_version: str
-    source_path: str
-    beam_width: int  # 빔서치 폭
-    max_depth: int  # 탐색 깊이
-    time_limit_sec: int
+from pathlib import Path
+from typing import Tuple
 
 
 class AlgoAgent(Agent):
-    def __init__(self, grid_shape: Tuple[int, int], custom_param_gogo: str) -> None:
-        super().__init__(grid_shape)
+    def __init__(self, grid_shape: Tuple[int, int], model_path: Path) -> None:
+        super().__init__(grid_shape, model_path)
 
     def get_info(self) -> AlgoInfo:
         return AlgoInfo() # type: ignore

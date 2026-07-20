@@ -1,4 +1,3 @@
-# ai/envs/grid_encoder.py  (V6: global context 추가)
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

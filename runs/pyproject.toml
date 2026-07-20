@@ -3,7 +3,7 @@ name = "AppleGameRuns"
 version = "0.1.0"
 requires-python = ">=3.13"
 dependencies = [
-    # 필요하면 메인 프로젝트를 의존성으로 명시 가능
+    "psutil==7.2.2"
 ]
 
 [build-system]

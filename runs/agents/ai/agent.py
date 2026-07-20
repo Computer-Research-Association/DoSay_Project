@@ -8,12 +8,12 @@ from ai.wrappers.action_mask import wrap_with_mask
 
 import time
 import gymnasium as gym
-from numpy.typing import NDArray
+from pathlib import Path
 from typing import cast, Tuple
 
 class AIAgent(Agent):
-    def __init__(self, grid_shape: Tuple[int, int], model_path: str) -> None:
-        super().__init__(grid_shape)
+    def __init__(self, grid_shape: Tuple[int, int], model_path: Path) -> None:
+        super().__init__(grid_shape, model_path)
         
         import ai.envs
         ignore_logs()
