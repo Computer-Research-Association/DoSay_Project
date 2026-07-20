@@ -3,6 +3,7 @@ import time
 from pathlib import Path
 from agents.selector import select_agent
 from agents.ai.agent import AIAgent
+from system_info import format_system_info
 
 os.chdir(Path(__file__).parent)  # cwd를 runs/ 로 변경
 AGENTS_DIR = (Path(__file__).parent / "agents")
@@ -15,6 +16,7 @@ def main():
     agent_cls, model_path = select_agent(AGENTS_DIR)
     agent = agent_cls((ROWS, COLS), model_path)
     print(agent.get_info_formatted())
+    print(format_system_info(agent))
     print(f"\nRunning {N_EPISODES} episodes ...\n")
     start_time = time.time()
 
@@ -24,7 +26,7 @@ def main():
         steps, score = agent.run_episode(board_source=seed, render=False, delay=0.5)
         steps_list.append(steps)
         score_list.append(score)
-        print(f"[ep {i + 1}]  seed= {seed}, moves= {steps:>2}, score= {score:>3}")
+        # print(f"[ep {i + 1}]  seed= {seed}, moves= {steps:>2}, score= {score:>3}")
 
     time_elapsed = time.time() - start_time
     n = len(score_list)

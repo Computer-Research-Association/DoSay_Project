@@ -9,7 +9,6 @@ from ai.wrappers.action_mask import wrap_with_mask
 import time
 import gymnasium as gym
 from pathlib import Path
-from numpy.typing import NDArray
 from typing import cast, Tuple
 
 class AIAgent(Agent):
