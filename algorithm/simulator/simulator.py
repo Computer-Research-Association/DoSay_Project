@@ -1,6 +1,9 @@
 
 import time
 
+
+import random
+import time
 import numpy as np
 from algorithm.evaluator.evaluate_result import EvaluateSummary, GameResult
 from algorithm.evaluator.evaluator import pick_best_action
@@ -86,9 +89,16 @@ class Simulator:
             clear_rate=clear_rate,
             weights=self.weights
         )
-    
+def run_single(weights: dict[str, float], n_games: int, seed: int | None = None) -> EvaluateSummary:
+    if seed is not None:
+        random.seed(seed)
+        np.random.seed(seed)
+    simulator = Simulator(weights=weights)
+    return simulator.simulate(n_games=n_games)
+
+DEFAULT_WEIGHTS: dict[str, float] = {"remove_nine": 9.0, "remove_the_most_grouping": 3.0} #comaprison용 변수
+
 if __name__ == "__main__":
-    simulator = Simulator(weights={"feature1": 1.0, "feature2": 0.5})  # 예시 가중치
-    summary = simulator.simulate(n_games=100)
+    summary = run_single(weights={"feature1": 1.0, "feature2": 3.0}, n_games=100, seed=42) #feature 가중치 설저 , game 판 수 설정 , seed 설정
     print(summary)
     

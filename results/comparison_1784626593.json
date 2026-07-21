@@ -1,0 +1,45 @@
+{
+  "generated_at": "2026-07-21T18:36:34",
+  "n_games": 3,
+  "git": {
+    "commit": "f3d7bf2cea0971f4c203331cb49f578a22dedcca",
+    "dirty": false
+  },
+  "feature_snapshot": {
+    "remove_nine": {
+      "default_weight": 1.0,
+      "source": "def feature_remove_nine(ctx: FeatureContext) -> float:\n    area = ctx.board_array\n    if not(area == 9).any(): #격자 안에 9가 없을시 0을 return한다\n        return 0.0\n    nine_count = int((area==9).sum()) #area안에 9가 있는 수의 개수\n    if not _has_nine_one_pair(ctx): #9와 짝 지어지는 경우의 수가 판 내에 존재하는지\n        return 0.0\n    return sigmoid(nine_count, k = 0.5, x0 = 3.0) #추후 이 값을 조정하면서 k 값과 x0 값을 찾아도 됨\n",
+      "source_hash": "733bcbe50910"
+    },
+    "remove_eight": {
+      "default_weight": 1.0,
+      "source": "def feature_remove_eight(ctx: FeatureContext) -> float:\n    area = ctx.board_array\n    if not(area == 8).any():\n        return 0.0\n    eight_count = int((area==8).sum()) \n    if not _has_eight_pair(ctx):\n        return 0.0\n    return sigmoid(eight_count, k = 0.5, x0 = 3.0)\n",
+      "source_hash": "5cf66e82ee82"
+    },
+    "grouping": {
+      "default_weight": 1.0,
+      "source": "def feature_remove_the_most_grouping(ctx: FeatureContext) -> float:\n    \n    return float((ctx.area != 0).sum()) / ctx.area.size\n",
+      "source_hash": "267e7f89adf9"
+    }
+  },
+  "runs": [
+    {
+      "name": "from_simulator_default",
+      "weights": {
+        "remove_nine": 3.0,
+        "remove_the_most_grouping": 3.0
+      },
+      "summary": {
+        "n_games": 3,
+        "max_score": 126,
+        "min_score": 84,
+        "avg_score": 102.66666666666667,
+        "std_score": 17.46106780494506,
+        "avg_turn": 42.0,
+        "avg_time": 0.22505826666626186,
+        "avg_max_score_ratio": 0.6337448559670782,
+        "clear_rate": 0.0
+      }
+    }
+  ]
+}

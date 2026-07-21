@@ -1,0 +1,21 @@
+{
+  "generated_at": "2026-07-16T20:18:16",
+  "n_games": 3,
+  "runs": [
+    {
+      "name": "baseline_equal_weight",
+      "weights": {},
+      "summary": {
+        "n_games": 3,
+        "max_score": 101,
+        "min_score": 92,
+        "avg_score": 97.0,
+        "std_score": 3.7416573867739413,
+        "avg_turn": 41.0,
+        "avg_time": 0.34664473333274753,
+        "avg_max_score_ratio": 0.5987654320987654,
+        "clear_rate": 0.0
+      }
+    }
+  ]
+}
