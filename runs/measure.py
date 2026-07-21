@@ -1,6 +1,7 @@
 import os
 import time
 from pathlib import Path
+import numpy as np
 from agents.selector import select_agent
 from system_info import format_system_info
 
@@ -35,6 +36,7 @@ def main():
     print(f" episodes     : {n}")
     print(f" avg moves    : {sum(steps_list) / n:.2f}")
     print(f" avg score    : {sum(score_list) / n:.2f}")
+    print(f" std score    : {np.std(score_list):.2f}")
     print(f" best score   : {score_list[best_i]}  (seed={BASE_SEED + best_i})")
     print(f" worst score  : {score_list[worst_i]}  (seed={BASE_SEED + worst_i})")
     print(f" time elapsed : {int(time_elapsed)}s (avg {time_elapsed / n:.2f})")
