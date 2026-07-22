@@ -9,7 +9,7 @@ def feature_remove_nine(ctx: FeatureContext) -> float:
     nine_count = int((area==9).sum()) #area안에 9가 있는 수의 개수
     if not _has_nine_one_pair(ctx): #9와 짝 지어지는 경우의 수가 판 내에 존재하는지
         return 0.0
-    return sigmoid(nine_count, k = 0.5, x0 = 3.0) #추후 이 값을 조정하면서 k 값과 x0 값을 찾아도 됨
+    return sigmoid(nine_count, k = 1.2, x0 = 3.0) #추후 이 값을 조정하면서 k 값과 x0 값을 찾아도 됨
 
 def feature_remove_eight(ctx: FeatureContext) -> float:
     area = ctx.board_array
