@@ -7,7 +7,7 @@ class AIInfo:
     model_type: str           = field(metadata={"label": "Model Type"})
     model_name: str           = field(metadata={"label": "Algorithm"})
     agent_version: str        = field(metadata={"label": "Version"})
-    source_path: Path          = field(metadata={"label": "File"})
+    source_path: Path         = field(metadata={"label": "File"})
     model_policy: str         = field(metadata={"label": "Policy"})
     model_obs: str            = field(metadata={"label": "Obs space"})
     model_act: str            = field(metadata={"label": "Act space"})
