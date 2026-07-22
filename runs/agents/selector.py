@@ -1,20 +1,19 @@
 from pathlib import Path
 from typing import Tuple, Type
 
+import game
 from agents.base import Agent
 from agents.ai.agent import AIAgent
 from agents.algorithm.agent import AlgoAgent
 from agents.utils import select_from
 
-AGENTS_DIR = Path(__file__).parent
-
 AGENT_REGISTRY: dict[str, tuple[Type[Agent], str]] = {
-    "ai": (AIAgent, "ai/models/*.zip"),
-    "algorithm": (AlgoAgent, "algorithm/models/*.py"),
+    "ai": (AIAgent, "ai/models/version/*.zip"),
+    "algorithm": (AlgoAgent, "algorithm/models/version/*.py"),
 }
 
 
-def select_agent(agents_dir: Path = AGENTS_DIR) -> Tuple[Type[Agent], Path]:
+def select_agent(agents_dir: Path) -> Tuple[Type[Agent], Path]:
     types = list(AGENT_REGISTRY.keys())
     agent_type = types[select_from("Select Agent Type", types)]
 
