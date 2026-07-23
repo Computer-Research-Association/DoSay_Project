@@ -3,6 +3,7 @@ from pathlib import Path
 from abc import ABC
 from types import ModuleType
 from typing import Tuple, cast
+import copy
 
 import numpy as np
 from numpy.typing import NDArray
@@ -10,8 +11,6 @@ from numpy.typing import NDArray
 from algorithm.models.utils import HeuristicRegistry
 from game.board import Board
 from agents.dtos import AlgoInfo  # type: ignore
-
-from algorithm.feature_assistance.feature_context import FeatureContext
 
 class AlgoExecutor(ABC): 
     def __init__(self, grid_shape: Tuple[int, int], model_path: Path):
@@ -58,8 +57,9 @@ class GreedyExecutor(AlgoExecutor):
         registry = cast(HeuristicRegistry, self.cls.registry)
 
         def score_of(action) -> float:
-            ctx = FeatureContext.from_board(self.board.grid, action, valid_actions=actions)
-            return registry.evaluate(ctx)
+            child_board = copy.deepcopy(self.board)
+            child_board.do_action(action)
+            return registry.evaluate(child_board)
 
         best_action = max(actions, key=score_of)
         _, cleared = self.board.do_action(best_action)

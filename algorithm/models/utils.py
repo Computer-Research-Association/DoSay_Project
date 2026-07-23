@@ -1,6 +1,7 @@
-from algorithm.feature_assistance.feature_context import FeatureContext
 from dataclasses import dataclass
 from typing import Callable
+
+from game.board import Board
 
 @dataclass
 class HeuristicEntry:
@@ -18,7 +19,7 @@ class HeuristicRegistry:
             return func
         return decorator
 
-    def evaluate(self, state: FeatureContext) -> float:
+    def evaluate(self, state: Board) -> float:
         return sum(e.weight * e.func(state) for e in self.entries)
 
     # def evaluate_verbose(self, state) -> dict:

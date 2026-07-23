@@ -8,11 +8,6 @@ from typing import Tuple
 
 from algorithm.models.model_executor import AlgoExecutor, GreedyExecutor
 
-def _parse_filename(path: Path) -> Tuple[str, str]:
-    name = path.name
-    model_type, model_version = name.split("_")
-    return model_type, model_version
-
 class AlgoAgent(Agent):
     def __new__(cls, grid_shape: Tuple[int, int], model_path: Path, **kwargs):
         if cls is AlgoAgent:  # 정확히 AlgoAgent로 생성 요청된 경우만
