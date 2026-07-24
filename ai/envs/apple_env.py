@@ -2,6 +2,7 @@ from typing import Any
 
 import gymnasium as gym
 from gymnasium import spaces
+from game.GUI import GUI
 from game.action import Action
 from game.board import Board
 from gymnasium import spaces
@@ -22,16 +23,22 @@ def get_all_action(rows, cols) -> list[Action]:
 
 class AppleGameEnv(gym.Env):
     metadata = {
-        "render_modes": ["ansi", "None"], # "human" 은 추후 개발
+        "render_modes": ["human", "ansi", "None"]
     }
 
 
     def __init__(self, rows: int, cols: int, render_mode: str | None = None):
+        super().__init__()
         self.row_num = rows
         self.col_num = cols
         self.total_cell_count = rows * cols
-        self.render_mode = render_mode
-        super().__init__()
+
+        if render_mode in self.metadata["render_modes"]:
+            self.render_mode = render_mode
+            if render_mode == "human":
+                self.GUI = GUI(rows, cols, title="AppleGame - AI")
+        else:
+            self.render_mode = "ansi"
 
         self.board: Board
         self._score = 0
@@ -85,8 +92,8 @@ class AppleGameEnv(gym.Env):
         obs = self._get_obs()
         info = self._get_info()
         
-        # if self.render_mode == "human":
-        #     self._render_frame()
+        if self.render_mode == "human":
+            self._render_frame()
 
         return obs, info
 

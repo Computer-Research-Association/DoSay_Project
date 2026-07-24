@@ -7,50 +7,50 @@ from game.action import Action
 
 Color = Tuple[int, int, int]
 
-class Theme:
-    BG = (205, 217, 187)          # 배경색
 
-    BOARD_FILL = (214, 225, 197)  # 보드(사과 영역) 채움
-    BOARD_EDGE = (168, 184, 146)  # 보드 테두리
+THEME = {
+    "BG": (205, 217, 187), 
 
-    APPLE_TOP = (234, 112, 80)    # 사과 위쪽
-    APPLE_BOTTOM = (222, 94, 64)  # 사과 아래쪽
-    APPLE_EDGE = (198, 78, 52)    # 사과 테두리(구분용)
-    APPLE_TEXT = (252, 250, 246)  # 사과 값
+    "BOARD_FILL": (214, 225, 197),  # 보드(사과 영역) 채움
+    "BOARD_EDGE": (168, 184, 146),  # 보드 테두리
 
-    PILL_BG = (245, 247, 238)     # 정보 배경
-    PILL_LABEL = (120, 130, 108)  # 라벨
-    PILL_VALUE = (64, 72, 54)     # 라벨 값
+    "APPLE_TOP": (234, 112, 80),    # 사과 위쪽
+    "APPLE_BOTTOM": (222, 94, 64),  # 사과 아래쪽
+    "APPLE_EDGE": (198, 78, 52),    # 사과 테두리(구분용)
+    "APPLE_TEXT": (252, 250, 246),  # 사과 값
 
-    HIGHLIGHT = (255, 255, 255, 160)       # 마지막 수 강조 외각선
-    HIGHLIGHT_FILL = (255, 255, 255, 90)   # 강조 배경
+    "PILL_BG": (245, 247, 238),     # 정보 배경
+    "PILL_LABEL": (120, 130, 108),  # 라벨
+    "PILL_VALUE": (64, 72, 54),     # 라벨 값
 
-    CELL_SIZE = 46       # 셀 한 변(px)
-    APPLE_PAD = 4        # 셀 안쪽 사과 여백(px)
-    MARGIN = 22          # 창 바깥 여백(px)
-    HEADER_H = 66        # 상단 정보 영역 높이(px)
-    BOARD_PAD = 9        # 보드 테두리와 사과 사이 여백(px)
-    BOARD_RADIUS = 14    # 보드 모서리 둥글기(px)
-    PILL_RADIUS = 16     # 알약 둥글기(px)
+    "HIGHLIGHT": (255, 255, 255, 160),       # 마지막 수 강조 외각선
+    "HIGHLIGHT_FILL": (255, 255, 255, 90),   # 강조 배경
 
+    "CELL_SIZE": 46,       # 셀 한 변(px)
+    "APPLE_PAD": 4,        # 셀 안쪽 사과 여백(px)
+    "MARGIN": 22,          # 창 바깥 여백(px)
+    "HEADER_H": 66,        # 상단 정보 영역 높이(px)
+    "BOARD_PAD": 9,        # 보드 테두리와 사과 사이 여백(px)
+    "BOARD_RADIUS": 14,    # 보드 모서리 둥글기(px)
+    "PILL_RADIUS": 16      # 알약 둥글기(px)
+}
+THEME["MARGIN"]
 
-class GameGUI:
-    def __init__(self, rows: int, cols: int, *, theme: Optional[Theme] = None, fps: int = 60, title: str = "Apple Game") -> None:
+class GUI:
+    def __init__(self, rows: int, cols: int, *, title: str = "Apple Game") -> None:
         self.rows = rows
         self.cols = cols
-        self.theme = theme or Theme()
-        self.fps = fps
         self._alive = True
 
-        t = self.theme
-        self._panel_x = t.MARGIN
-        self._panel_y = t.HEADER_H
-        self._panel_w = cols * t.CELL_SIZE + t.BOARD_PAD * 2
-        self._panel_h = rows * t.CELL_SIZE + t.BOARD_PAD * 2
-        self._board_x = self._panel_x + t.BOARD_PAD
-        self._board_y = self._panel_y + t.BOARD_PAD
-        self.width = self._panel_w + t.MARGIN * 2
-        self.height = self._panel_y + self._panel_h + t.MARGIN
+        
+        self._panel_x = THEME["MARGIN"]
+        self._panel_y = THEME["HEADER_H"]
+        self._panel_w = cols * THEME["CELL_SIZE"] + THEME["BOARD_PAD"] * 2
+        self._panel_h = rows * THEME["CELL_SIZE"] + THEME["BOARD_PAD"] * 2
+        self._board_x = self._panel_x + THEME["BOARD_PAD"]
+        self._board_y = self._panel_y + THEME["BOARD_PAD"]
+        self.width = self._panel_w + THEME["MARGIN"] * 2
+        self.height = self._panel_y + self._panel_h + THEME["MARGIN"]
 
         pygame.init()
         pygame.display.set_caption(title)
@@ -58,7 +58,7 @@ class GameGUI:
 
         self._font_label = self._load_font(17, bold=False)
         self._font_value = self._load_font(23, bold=True)
-        self._font_apple = self._load_font(int(t.CELL_SIZE * 0.46), bold=True)
+        self._font_apple = self._load_font(int(THEME["CELL_SIZE"] * 0.46), bold=True)
 
         self._max_digits = len(str(max(1, rows * cols)))
         digit_w = max(self._font_value.size(str(d))[0] for d in range(10))
@@ -75,29 +75,29 @@ class GameGUI:
         return pygame.font.SysFont("arial", size, bold=bold)
 
     def _build_apple_tile(self, value: int) -> pygame.Surface:
-        t = self.theme
-        size = t.CELL_SIZE
+        
+        size = THEME["CELL_SIZE"]
         s = 4
         big = size * s
         surf = pygame.Surface((big, big), pygame.SRCALPHA)
 
         cx = cy = big // 2
-        radius = (size // 2 - t.APPLE_PAD) * s
+        radius = (size // 2 - THEME["APPLE_PAD"]) * s
 
         for dy in range(-radius, radius + 1):
             frac = (dy + radius) / (2 * radius)
             color = (
-                round(t.APPLE_TOP[0] + (t.APPLE_BOTTOM[0] - t.APPLE_TOP[0]) * frac),
-                round(t.APPLE_TOP[1] + (t.APPLE_BOTTOM[1] - t.APPLE_TOP[1]) * frac),
-                round(t.APPLE_TOP[2] + (t.APPLE_BOTTOM[2] - t.APPLE_TOP[2]) * frac),
+                round(THEME["APPLE_TOP"][0] + (THEME["APPLE_BOTTOM"][0] - THEME["APPLE_TOP"][0]) * frac),
+                round(THEME["APPLE_TOP"][1] + (THEME["APPLE_BOTTOM"][1] - THEME["APPLE_TOP"][1]) * frac),
+                round(THEME["APPLE_TOP"][2] + (THEME["APPLE_BOTTOM"][2] - THEME["APPLE_TOP"][2]) * frac),
             )
             half = int((radius * radius - dy * dy) ** 0.5)
             pygame.draw.line(surf, color, (cx - half, cy + dy), (cx + half, cy + dy))
 
-        pygame.draw.circle(surf, t.APPLE_EDGE, (cx, cy), radius, width=2 * s)
+        pygame.draw.circle(surf, THEME["APPLE_EDGE"], (cx, cy), radius, width=2 * s)
 
         surf = pygame.transform.smoothscale(surf, (size, size))
-        text = self._font_apple.render(str(value), True, t.APPLE_TEXT)
+        text = self._font_apple.render(str(value), True, THEME["APPLE_TEXT"])
         surf.blit(text, text.get_rect(center=(size // 2, size // 2)))
         return surf
 
@@ -120,7 +120,7 @@ class GameGUI:
         if not self._alive:
             return False
 
-        self.screen.fill(self.theme.BG)
+        self.screen.fill(THEME["BG"])
         self._draw_board_panel()
         self._draw_hud(score, step, remaining)
         self._draw_apples(grid)
@@ -143,29 +143,29 @@ class GameGUI:
                 self._alive = False
 
     def _draw_board_panel(self) -> None:
-        t = self.theme
+        
         rect = pygame.Rect(self._panel_x, self._panel_y, self._panel_w, self._panel_h)
-        pygame.draw.rect(self.screen, t.BOARD_FILL, rect, border_radius=t.BOARD_RADIUS)
-        pygame.draw.rect(self.screen, t.BOARD_EDGE, rect, width=2, border_radius=t.BOARD_RADIUS)
+        pygame.draw.rect(self.screen, THEME["BOARD_FILL"], rect, border_radius=THEME["BOARD_RADIUS"])
+        pygame.draw.rect(self.screen, THEME["BOARD_EDGE"], rect, width=2, border_radius=THEME["BOARD_RADIUS"])
 
     def _draw_hud(self, score: int, step: int, remaining: int) -> None:
-        t = self.theme
-        cy = t.HEADER_H // 2
+        
+        cy = THEME["HEADER_H"] // 2
 
-        x = t.MARGIN
+        x = THEME["MARGIN"]
         for label, value in [("STEP", step), ("APPLES", remaining)]:
             x = self._draw_pill(x, cy, label, str(value), anchor="left") + 12
-        self._draw_pill(self.width - t.MARGIN, cy, "SCORE", str(score), anchor="right")
+        self._draw_pill(self.width - THEME["MARGIN"], cy, "SCORE", str(score), anchor="right")
 
     def _draw_pill(self, x: int, cy: int, label: str, value: str, *, anchor: str) -> int:
-        t = self.theme
+        
         pad_x, gap, h = 16, 10, 38
-        lab = self._font_label.render(label.title(), True, t.PILL_LABEL)
+        lab = self._font_label.render(label.title(), True, THEME["PILL_LABEL"])
         w = pad_x * 2 + lab.get_width() + gap + self._value_field_w
 
         left = x if anchor == "left" else x - w
         rect = pygame.Rect(left, cy - h // 2, w, h)
-        pygame.draw.rect(self.screen, t.PILL_BG, rect, border_radius=t.PILL_RADIUS)
+        pygame.draw.rect(self.screen, THEME["PILL_BG"], rect, border_radius=THEME["PILL_RADIUS"])
 
         tx = left + pad_x
         self.screen.blit(lab, (tx, cy - lab.get_height() // 2))
@@ -178,13 +178,13 @@ class GameGUI:
     def _value_text(self, key: str, value: str) -> pygame.Surface:
         cached = self._value_cache.get(key)
         if cached is None or cached[0] != value:
-            surf = self._font_value.render(value, True, self.theme.PILL_VALUE)
+            surf = self._font_value.render(value, True, THEME["PILL_VALUE"])
             self._value_cache[key] = (value, surf)
             return surf
         return cached[1]
 
     def _draw_apples(self, grid: Iterable[Iterable[int]]) -> None:
-        t = self.theme
+        
         x0, y0 = self._board_x, self._board_y
         for r, row in enumerate(grid):
             for c, value in enumerate(row):
@@ -193,17 +193,17 @@ class GameGUI:
                     continue  # 0(빈 칸)은 그리지 않음
                 tile = self._apple_tiles.get(v)
                 if tile is not None:
-                    self.screen.blit(tile, (x0 + c * t.CELL_SIZE, y0 + r * t.CELL_SIZE))
+                    self.screen.blit(tile, (x0 + c * THEME["CELL_SIZE"], y0 + r * THEME["CELL_SIZE"]))
 
     def _draw_highlight(self, action: Action) -> None:
-        t = self.theme
+        
         (r1, c1), (r2, c2) = action.top_left, action.bottom_right
-        x = self._board_x + c1 * t.CELL_SIZE - 2
-        y = self._board_y + r1 * t.CELL_SIZE - 2
-        w = (c2 - c1 + 1) * t.CELL_SIZE + 4
-        h = (r2 - r1 + 1) * t.CELL_SIZE + 4
+        x = self._board_x + c1 * THEME["CELL_SIZE"] - 2
+        y = self._board_y + r1 * THEME["CELL_SIZE"] - 2
+        w = (c2 - c1 + 1) * THEME["CELL_SIZE"] + 4
+        h = (r2 - r1 + 1) * THEME["CELL_SIZE"] + 4
 
         overlay = pygame.Surface((w, h), pygame.SRCALPHA)
-        pygame.draw.rect(overlay, t.HIGHLIGHT_FILL, overlay.get_rect(), border_radius=10)
-        pygame.draw.rect(overlay, t.HIGHLIGHT, overlay.get_rect(), width=3, border_radius=10)
+        pygame.draw.rect(overlay, THEME["HIGHLIGHT_FILL"], overlay.get_rect(), border_radius=10)
+        pygame.draw.rect(overlay, THEME["HIGHLIGHT"], overlay.get_rect(), width=3, border_radius=10)
         self.screen.blit(overlay, (x, y))
