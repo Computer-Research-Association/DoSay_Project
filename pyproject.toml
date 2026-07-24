@@ -9,6 +9,7 @@ dependencies = [
     "stable_baselines3==2.9.0",
     "torch==2.12.1",
     "tensorboard==2.21.0",
+    "pygame-ce==2.5.7"
 ]
  
 [build-system]

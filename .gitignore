@@ -1,7 +1,6 @@
 # Custom
 ai/checkpoints
-runs/agents/ai/models/*.zip
-ai/*.zip
+ai/models/version/*.zip
 ai/logs/
 /checkpoints/
 *.txt

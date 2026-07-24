@@ -2,6 +2,7 @@ from typing import Any
 
 import gymnasium as gym
 from gymnasium import spaces
+from game.GUI import GUI
 from game.action import Action
 from game.board import Board
 from gymnasium import spaces
@@ -22,19 +23,27 @@ def get_all_action(rows, cols) -> list[Action]:
 
 class AppleGameEnv(gym.Env):
     metadata = {
-        "render_modes": ["ansi", "None"], # "human" 은 추후 개발
+        "render_modes": ["human", "ansi", "None"]
     }
 
 
     def __init__(self, rows: int, cols: int, render_mode: str | None = None):
+        super().__init__()
         self.row_num = rows
         self.col_num = cols
         self.total_cell_count = rows * cols
-        self.render_mode = render_mode
-        super().__init__()
+
+        if render_mode in self.metadata["render_modes"]:
+            self.render_mode = render_mode
+            if render_mode == "human":
+                self.GUI = GUI(rows, cols, title="AppleGame - AI")
+        else:
+            self.render_mode = "ansi"
 
         self.board: Board
-        self._score = 0
+        self.last_action: Action | None = None
+        self.step_num = 0
+        self.score = 0
 
         # action idx로 처리하기 위해 초기 매핑 진행. Descrete Action용
         self.index_to_action: list[Action] = get_all_action(rows, cols)
@@ -61,7 +70,8 @@ class AppleGameEnv(gym.Env):
     def _get_info(self) -> dict[str, Any]:
         return {
             "action_mask": self.get_action_mask(),
-            "score": self._score
+            "step_num": self.step_num,
+            "score": self.score
         }
     
 
@@ -71,28 +81,26 @@ class AppleGameEnv(gym.Env):
         shape = (self.row_num, self.col_num)
 
         board_source = options.get("board_source")
-
+        self.last_action = None
+        self.step_num = 0
         if isinstance(board_source, (np.ndarray, list)):
             _board = np.asarray(board_source, dtype=np.int8)
             self.board = Board.from_board(_board)
-            self._score = _board.size - np.count_nonzero(_board)
+            self.score = _board.size - int(np.count_nonzero(_board))
         elif board_source is None or isinstance(board_source, int):
             self.board = Board.from_seed(shape, board_source)
-            self._score = 0
+            self.score = 0
         else:
             raise TypeError(f"board_source must be ndarray, list, or int, got {type(board_source).__name__}")
 
         obs = self._get_obs()
         info = self._get_info()
-        
-        # if self.render_mode == "human":
-        #     self._render_frame()
 
         return obs, info
 
 
     def step(self, action: int):  # action_idx -> action
-        act = self.index_to_action[action]        
+        act = self.index_to_action[action]
         is_valid, remove_count = self.board.do_action(act)
         if not is_valid:
             # print("경고: 로직상 도달하면 안되는 영역의 코드가 작동됨. [ ai > env > step() > valid ]")
@@ -100,15 +108,17 @@ class AppleGameEnv(gym.Env):
             info = self._get_info()
             return obs, -1.0, False, False, info
 
+        self.last_action = act
         reward = (remove_count/self.total_cell_count) * constants.STEP_REWARD_TOTAL
-        self._score += remove_count
+        self.step_num += 1
+        self.score += remove_count
 
         terminated, is_all_clear = self.board.is_done()
 
         if terminated:
             if is_all_clear:
                 reward += constants.REWARD_ALL_CLEAR_BONUS
-            reward += (self._score/self.total_cell_count) * constants.TERMINAL_REWARD_TOTAL
+            reward += (self.score/self.total_cell_count) * constants.TERMINAL_REWARD_TOTAL
 
         obs = self._get_obs()
         info = self._get_info()
@@ -120,8 +130,10 @@ class AppleGameEnv(gym.Env):
 
     def render(self):
         if self.render_mode in self.metadata["render_modes"]:
-            if self.render_mode == "ansi":
+            if self.render_mode == "human":
+                self.GUI.render(self.board.grid, score=self.score, step=self.step_num, remaining=int(np.count_nonzero(self.board.grid)), action=self.last_action)
+            elif self.render_mode == "ansi":
                 self.board.print_board(True)
-            if self.render_mode == "None":
+            elif self.render_mode == "None":
                 return None
         return None

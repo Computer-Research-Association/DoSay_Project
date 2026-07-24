@@ -37,7 +37,7 @@ class AlgoExecutor(ABC):
 
     def _load_model(self):
         model_type, model_version = self.model_path.name.split("_")
-        self.model_info = AlgoInfo("Algorithm", model_type, model_version, self.model_path)
+        self.model_info = AlgoInfo("Algorithm", model_type, model_version, self.model_path.relative_to(Path.cwd()))
         self.cls = importlib.import_module(f"algorithm.models.version.{self.model_path.stem}")
         
 

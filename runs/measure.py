@@ -6,15 +6,16 @@ import game
 from agents.selector import select_agent
 from system_info import format_system_info
 
-os.chdir(Path(__file__).parent)  # cwd를 runs/ 로 변경
-AGENTS_DIR = Path(game.__file__).resolve().parent.parent
+ROOT_DIR = Path(game.__file__).resolve().parent.parent
 N_EPISODES = 100
 BASE_SEED  = 1234
 ROWS, COLS = 9, 18
 
+os.chdir(ROOT_DIR)
+
 
 def main():
-    agent_cls, model_path = select_agent(AGENTS_DIR)
+    agent_cls, model_path = select_agent(agents_dir=ROOT_DIR)
     agent = agent_cls((ROWS, COLS), model_path)
     print(agent.get_info_formatted())
     print(format_system_info(agent))
