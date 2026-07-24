@@ -2,12 +2,13 @@ import os
 import time
 from pathlib import Path
 import numpy as np
+import game
 from agents.selector import select_agent
 from system_info import format_system_info
 
 os.chdir(Path(__file__).parent)  # cwd를 runs/ 로 변경
-AGENTS_DIR = (Path(__file__).parent / "agents")
-N_EPISODES = 10000
+AGENTS_DIR = Path(game.__file__).resolve().parent.parent
+N_EPISODES = 100
 BASE_SEED  = 1234
 ROWS, COLS = 9, 18
 
