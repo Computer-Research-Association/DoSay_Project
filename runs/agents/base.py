@@ -31,7 +31,11 @@ class Agent(ABC):
 
     def get_info_formatted(self) -> str:
         info = self.get_info()
-        rows = [(f.metadata.get("label", f.name), _format_value(getattr(info, f.name))) for f in fields(info)]
+        rows = [
+            (f.metadata.get("label", f.name), _format_value(val)) 
+            for f in fields(info) 
+            if (val := getattr(info, f.name)) is not None
+        ]
 
         label_width = max(len(label) for label, _ in rows)
         lines = [f"{label:<{label_width}} : {value}" for label, value in rows]
