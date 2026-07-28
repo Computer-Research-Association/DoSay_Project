@@ -224,3 +224,19 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# --- 시뮬레이션/비교 실행 결과물 (comparison_test.py가 생성) ---
+results/
+
+# --- Python 캐시 ---
+__pycache__/
+*.pyc
+
+# --- 가상환경 ---
+.venv/
+
+# --- 구글 드라이브 API 방식 쓸 경우 (OAuth 인증정보 - 절대 커밋 금지) ---
+.claude/scripts/gdrive_credentials.json
+.claude/scripts/gdrive_token.json
+algorithm/scripts/gdrive_credentials.json
+algorithm/scripts/gdrive_token.json
