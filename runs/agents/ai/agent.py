@@ -3,23 +3,18 @@ from agents.base import Agent
 from .utils import ignore_logs
 from .model_loader import load_model
 from agents.dtos import AIInfo
-from ai.envs.apple_env import AppleGameEnv
-from ai.wrappers.action_mask import wrap_with_mask
 
 import time
-import gymnasium as gym
 from pathlib import Path
 from typing import cast, Tuple
 
 class AIAgent(Agent):
     def __init__(self, grid_shape: Tuple[int, int], model_path: Path) -> None:
         super().__init__(grid_shape, model_path)
-        
-        import ai.envs
+
         ignore_logs()
-        env = gym.make("envs/AppleGame-v0", render_mode="ansi", rows=grid_shape[0], cols=grid_shape[1])
-        self.env = cast(AppleGameEnv, wrap_with_mask(env))
-        self.model, self.model_info = load_model(model_path, self.env)
+        # model_path 는 버전 폴더. 환경도 그 폴더의 env.py 가 만들어 준다.
+        self.model, self.env, self.model_info = load_model(model_path, grid_shape)
 
 
     def get_info(self) -> AIInfo:
@@ -36,7 +31,7 @@ class AIAgent(Agent):
         if render: self.env.render()
         while not (terminated or truncated):
             if is_action_masking:
-                action_masks = cast(AppleGameEnv, self.env.unwrapped).get_action_mask()
+                action_masks = self.env.unwrapped.get_action_mask()  # type: ignore[attr-defined]
                 if not action_masks.any(): break  # 유효한 수 없음 -> 종료
                 action, _ = self.model.predict(obs, action_masks=action_masks, deterministic=True)
             else:
