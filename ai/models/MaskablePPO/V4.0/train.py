@@ -1,4 +1,4 @@
-import os, sys
+import sys
 from pathlib import Path
 
 VERSION_DIR = Path(__file__).resolve().parent
@@ -8,19 +8,19 @@ sys.path.insert(0, str(VERSION_DIR))
 
 from sb3_contrib import MaskablePPO
 from sb3_contrib.common.maskable.evaluation import evaluate_policy
-from stable_baselines3.common.callbacks import BaseCallback, CheckpointCallback
 from stable_baselines3.common.vec_env import SubprocVecEnv, VecMonitor
 
+from ai.training import (
+    CheckpointSaver, ScoreCallback, TrainConfig, describe_device, model_filename,
+    parse_train_args, save_model,
+)
 from ai.wrappers.action_mask import wrap_with_mask
 from env import make_env                          # 같은 폴더
 from model import POLICY_CLASS, make_policy_kwargs  # 같은 폴더
 
+ALGORITHM = "MaskablePPO"
 AI_VERSION = "4.0"
-TOTAL_TIMESTEP = 1_000_000
-CHECKPOINT_TIMESTEP = 100_000
 ROWS, COLS = 9, 18
-
-N_ENVS = max(1, (os.cpu_count() or 0) - 1)
 
 
 def _env():
@@ -29,8 +29,8 @@ def _env():
     return _init
 
 
-def generate_env():
-    return VecMonitor(SubprocVecEnv([_env() for _ in range(N_ENVS)]))
+def generate_env(config: TrainConfig):
+    return VecMonitor(SubprocVecEnv([_env() for _ in range(config.n_envs)]))
 
 
 def linear_schedule(initial_value: float):
@@ -39,21 +39,7 @@ def linear_schedule(initial_value: float):
     return func
 
 
-class ScoreCallback(BaseCallback):
-    def _on_step(self) -> bool:
-        for info in self.locals["infos"]:
-            if "episode" in info and "score" in info:
-                self.logger.record_mean("rollout/ep_score_mean", info["score"])
-        return True
-
-
-def train_model(env):
-    checkpoint_callback = CheckpointCallback(
-        save_freq=max(CHECKPOINT_TIMESTEP // N_ENVS, 1),
-        save_path=str(VERSION_DIR / "checkpoints"),
-        name_prefix=f"MaskablePPO_V{AI_VERSION}",
-    )
-
+def train_model(env, config: TrainConfig):
     model = MaskablePPO(
         POLICY_CLASS,
         env,
@@ -63,21 +49,24 @@ def train_model(env):
         n_epochs=10,
         gamma=0.99,
         ent_coef=0.01,
-        device="cuda",
+        device=config.device,
         verbose=1,
         policy_kwargs=make_policy_kwargs(ROWS, COLS),
-        tensorboard_log=str(ROOT / "ai" / "logs"),
+        tensorboard_log=str(config.log_dir),
     )
 
     model.learn(
-        total_timesteps=TOTAL_TIMESTEP,
-        tb_log_name=f"MaskablePPO_V{AI_VERSION}_{TOTAL_TIMESTEP}",
-        callback=[checkpoint_callback, ScoreCallback()],
+        total_timesteps=config.total_timestep,
+        tb_log_name=model_filename(ALGORITHM, AI_VERSION, config.total_timestep),
+        callback=[
+            CheckpointSaver(config, ALGORITHM, AI_VERSION),
+            ScoreCallback(),
+        ],
     )
 
-    # 버전 폴더 안에 저장 -> measure.py 가 이 폴더를 선택 가능해진다
-    model.save(str(VERSION_DIR / f"MaskablePPO_V{AI_VERSION}_{TOTAL_TIMESTEP}.zip"))
-    print("AI 모델 저장 완료!")
+    # 체크포인트와 같은 models/ 폴더에 저장 -> measure.py 가 여기서 골라 쓴다
+    path = save_model(model, config, ALGORITHM, AI_VERSION, config.total_timestep)
+    print(f"AI 모델 저장 완료! -> {path}")
     return model
 
 
@@ -88,7 +77,9 @@ def evaluate_model(model):
 
 
 if __name__ == "__main__":
-    print(f"{N_ENVS}개 코어 병렬 처리 환경 구축")
-    env = generate_env()
-    model = train_model(env)
+    config = parse_train_args(VERSION_DIR)
+    print(describe_device(config.device))
+    print(f"{config.n_envs}개 코어 병렬 처리 환경 구축")
+    env = generate_env(config)
+    model = train_model(env, config)
     evaluate_model(model)

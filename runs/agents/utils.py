@@ -1,3 +1,6 @@
+from dataclasses import fields
+from pathlib import Path
+
 BOX_WIDTH = 68
 
 def format_box(title: str, lines: list[str]) -> str:
@@ -23,12 +26,18 @@ def select_from(title: str, options: list[str]) -> int:
     print_box(title, [f"[{i}] {opt}" for i, opt in enumerate(options, 1)])
     return prompt_index(len(options))
 
+def prompt_int(label: str, default: int, minimum: int = 1) -> int:
+    """Enter 만 누르면 기본값. 1_000_000 / 1,000,000 표기 모두 허용."""
+    while True:
+        raw = input(f"{label}  (기본 {default:,}) > ").strip().replace(",", "").replace("_", "")
+        if not raw:
+            return default
+        if raw.isdigit() and int(raw) >= minimum:
+            return int(raw)
+        print(f"  {minimum:,} 이상의 정수를 입력해주세요. (Enter = {default:,})")
 
 
 ########################################################
-
-from dataclasses import fields
-from pathlib import Path
 
 def format_value(value) -> str:
     if isinstance(value, bool):
@@ -41,8 +50,12 @@ def format_value(value) -> str:
 
 
 def format_dataclass_box(title: str, obj) -> str:
-    """dataclass 필드를 label/value로 정렬해 박스 문자열로 반환"""
-    rows = [(f.metadata.get("label", f.name), format_value(getattr(obj, f.name))) for f in fields(obj)]
+    """dataclass 필드를 label/value로 정렬해 박스 문자열로 반환. 값이 None인 필드는 건너뛴다."""
+    rows = [
+        (f.metadata.get("label", f.name), format_value(value))
+        for f in fields(obj)
+        if (value := getattr(obj, f.name)) is not None
+    ]
     label_width = max(len(label) for label, _ in rows)
     lines = [f"{label:<{label_width}} : {value}" for label, value in rows]
     return format_box(title, lines)

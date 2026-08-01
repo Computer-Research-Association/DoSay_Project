@@ -14,6 +14,18 @@ class AIInfo:
     model_act: str            = field(metadata={"label": "Act space"})
     total_train_steps: int    = field(metadata={"label": "Train steps"})
     use_action_masking: bool  = field(metadata={"label": "Maskable"})
+    # 버전 env.py 의 SEARCH_* 설정 요약. "off" 면 정책만으로 둔다.
+    search: Optional[str]     = field(metadata={"label": "Search"}, default=None)
+
+
+@dataclass
+class TrainInfo:
+    agent_version: str        = field(metadata={"label": "Version"})
+    total_timestep: int       = field(metadata={"label": "Total Timestep"})
+    checkpoint_timestep: int  = field(metadata={"label": "Checkpoint Timestep"})
+    save_path: Path           = field(metadata={"label": "Save to"})
+    device: str               = field(metadata={"label": "Device"}, default="auto")
+    n_envs: Optional[int]     = field(metadata={"label": "Envs"}, default=None)
 
 
 @dataclass

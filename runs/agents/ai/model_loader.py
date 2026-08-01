@@ -8,6 +8,7 @@ import gymnasium as gym
 from stable_baselines3.common.save_util import load_from_zip_file
 
 from agents.dtos import AIInfo
+from agents.ai.search import SearchConfig
 from ai.wrappers.action_mask import wrap_with_mask
 
 MODEL_REGISTRY = {
@@ -23,14 +24,46 @@ MODEL_REGISTRY = {
     "DDPG":         ("stable_baselines3", "DDPG",         False),
 }
 
-# 버전 폴더 안의 체크포인트 파일명 규격
-_NAME_PATTERN = re.compile(r"^(?P<name>.+)_V(?P<version>[\d.]+)_(?P<steps>\d+)$")
+# 버전 폴더 안의 체크포인트 파일명 규격.
+# 버전에 글자를 허용한다 (V8a, V8b 처럼 같은 세대의 변형을 나란히 두기 위해).
+# 밑줄은 일부러 제외 — 이름/버전/스텝 경계가 모호해지면 안 된다.
+_NAME_PATTERN = re.compile(r"^(?P<name>.+)_V(?P<version>[0-9A-Za-z.]+)_(?P<steps>\d+)$")
+
+# train.py 가 체크포인트/최종본 구분 없이 모두 넣어 두는 폴더
+MODELS_DIRNAME = "models"
 
 
-def find_checkpoint(version_dir: Path) -> Path | None:
-    """버전 폴더의 체크포인트. 없으면 None (= 아직 학습되지 않은 버전)."""
-    zips = sorted(version_dir.glob("*.zip"))
-    return zips[0] if zips else None
+def find_checkpoints(version_dir: Path) -> list[Path]:
+    """버전 폴더가 가진 모든 체크포인트를 학습 스텝 오름차순으로.
+
+    models/ 아래가 정식 위치이고, 버전 폴더 바로 아래도 함께 훑는다
+    (models/ 도입 이전에 학습한 모델을 그대로 쓸 수 있게).
+    파일명 규격에 맞지 않는 zip 은 조용히 건너뛰고,
+    양쪽에 같은 이름이 있으면 models/ 쪽만 남긴다.
+    """
+    candidates = [*(version_dir / MODELS_DIRNAME).glob("*.zip"), *version_dir.glob("*.zip")]
+
+    found: dict[str, tuple[int, Path]] = {}
+    for path in candidates:
+        m = _NAME_PATTERN.match(path.stem)
+        if m and path.stem not in found:
+            found[path.stem] = (int(m.group("steps")), path)
+
+    return [path for _, path in sorted(found.values(), key=lambda item: (item[0], item[1].name))]
+
+
+def describe_checkpoint(checkpoint: Path) -> str:
+    """선택 목록에 보여줄 한 줄 설명."""
+    m = _NAME_PATTERN.match(checkpoint.stem)
+    if m is None:
+        return checkpoint.name
+    return f"{int(m.group('steps')):>12,} steps   ({m.group('name')})"
+
+
+def resolve_version_dir(checkpoint: Path) -> Path:
+    """체크포인트가 속한 버전 폴더. models/ 하위든 버전 폴더 바로 아래든 모두 지원."""
+    parent = checkpoint.parent
+    return parent.parent if parent.name == MODELS_DIRNAME else parent
 
 
 def _load_sibling(version_dir: Path, stem: str):
@@ -69,6 +102,16 @@ def _parse_checkpoint_name(ckpt: Path, version_dir: Path) -> tuple[str, str, int
         raise KeyError(
             f"레지스트리에 없는 모델입니다: '{name}'. "
             f"MODEL_REGISTRY 에 추가해 주세요. (등록됨: {list(MODEL_REGISTRY)})"
+        )
+
+    # ai/models/<알고리즘>/<버전>/ 이므로 상위 폴더가 알고리즘 이름이어야 한다
+    algorithm_folder = version_dir.parent.name
+    if name != algorithm_folder:
+        raise ValueError(
+            f"폴더 구조와 체크포인트의 알고리즘이 다릅니다.\n"
+            f"  폴더  : {algorithm_folder}\n"
+            f"  파일  : {ckpt.name}  (-> {name})\n"
+            f"{version_dir} 는 {algorithm_folder} 폴더 아래에 있습니다."
         )
 
     version = m.group("version")
@@ -111,17 +154,38 @@ def _verify_no_drift(model, saved_keys: set[str], ckpt: Path, version_dir: Path)
     )
 
 
-def load_model(version_dir: Path, grid_shape: tuple[int, int], device: str = "cpu"):
-    """버전 폴더에서 (모델, 환경, 정보)를 복원"""
+def _resolve_checkpoint(source: Path) -> tuple[Path, Path]:
+    """(체크포인트, 버전 폴더). source 는 체크포인트 파일이거나 버전 폴더."""
+    if source.is_dir():
+        checkpoints = find_checkpoints(source)
+        if not checkpoints:
+            raise FileNotFoundError(
+                f"'{source.name}' 에는 학습된 체크포인트(.zip)가 없습니다.\n"
+                f"먼저 {source / 'train.py'} 를 실행해 모델을 만들어 주세요."
+            )
+        return checkpoints[-1], source  # 지정이 없으면 가장 많이 학습된 것
+
+    if not source.is_file():
+        raise FileNotFoundError(f"체크포인트를 찾을 수 없습니다: {source}")
+
+    return source, resolve_version_dir(source)
+
+
+def _search_config(env_mod) -> SearchConfig:
+    """버전 env.py 가 선언한 탐색 설정. 없으면 탐색 없음."""
+    return SearchConfig(
+        top_k=getattr(env_mod, "SEARCH_TOP_K", 0),
+        depth=getattr(env_mod, "SEARCH_DEPTH", 1),
+        beam_width=getattr(env_mod, "SEARCH_BEAM_WIDTH", 1),
+        beam_top_k=getattr(env_mod, "SEARCH_BEAM_TOP_K", 0),
+    )
+
+
+def load_model(source: Path, grid_shape: tuple[int, int], device: str = "cpu"):
+    """체크포인트(또는 버전 폴더)에서 (모델, 환경, 정보, 탐색설정)을 복원"""
     rows, cols = grid_shape
 
-    ckpt = find_checkpoint(version_dir)
-    if ckpt is None:
-        raise FileNotFoundError(
-            f"'{version_dir.name}' 에는 학습된 체크포인트(.zip)가 없습니다.\n"
-            f"먼저 {version_dir / 'train.py'} 를 실행해 모델을 만들어 주세요."
-        )
-
+    ckpt, version_dir = _resolve_checkpoint(source)
     model_name, version, steps = _parse_checkpoint_name(ckpt, version_dir)
     module_name, class_name, maskable = MODEL_REGISTRY[model_name]
     cls = getattr(importlib.import_module(module_name), class_name)
@@ -141,6 +205,7 @@ def load_model(version_dir: Path, grid_shape: tuple[int, int], device: str = "cp
 
     model = cls.load(ckpt, env=env, device=device, custom_objects=custom_objects)
     _verify_no_drift(model, saved_keys, ckpt, version_dir)
+    search_config = _search_config(env_mod)
 
     info = AIInfo(
         model_type="AI",
@@ -152,6 +217,7 @@ def load_model(version_dir: Path, grid_shape: tuple[int, int], device: str = "cp
         model_act=getattr(model, "action_space", "?"),
         total_train_steps=steps,
         use_action_masking=maskable,
+        search=search_config.describe(),
     )
 
-    return model, env, info
+    return model, env, info, search_config
