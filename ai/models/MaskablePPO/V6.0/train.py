@@ -72,7 +72,7 @@ def train_model(env, config: TrainConfig):
         vf_coef=0.5,
         max_grad_norm=0.5,
         device=config.device,
-        verbose=1,
+        verbose=config.verbose,
         policy_kwargs=make_policy_kwargs(ROWS, COLS),
         tensorboard_log=str(config.log_dir),
     )

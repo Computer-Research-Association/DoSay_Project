@@ -38,23 +38,43 @@ class MaskedDQN(DQN):
     합법 판정은 Q 신경망이 관측으로부터 이미 계산하고 있으므로 그것을 그대로 쓴다.
     """
 
-    def predict(self, observation, state=None, episode_start=None, deterministic=False):
-        if deterministic or np.random.rand() >= self.exploration_rate:
-            return super().predict(observation, state, episode_start, deterministic)
-
-        batched = self.policy.is_vectorized_observation(observation)
-        obs = observation if batched else observation[None]
-
+    def _masked_random(self, observation) -> np.ndarray:
+        """합법수 중에서 균등추출. 합법 판정은 신경망이 관측에서 이미 계산한다."""
         with torch.no_grad():
             mask = self.policy.q_net.legal_mask(
-                obs_as_tensor(obs, self.device)).cpu().numpy()
+                obs_as_tensor(observation, self.device)).cpu().numpy()
 
         actions = []
         for row in mask:
             legal = np.flatnonzero(row)
             actions.append(int(np.random.choice(legal)) if legal.size else 0)
+        return np.array(actions)
 
-        action = np.array(actions)
+    def _sample_action(self, learning_starts, action_noise=None, n_envs=1):
+        """워밍업 구간도 합법수만 뽑게 한다.
+
+        SB3 원본은 num_timesteps < learning_starts 인 동안 predict() 를 통째로
+        건너뛰고 action_space.sample() 로 7533개에서 균등추출한다. 합법수가 50개
+        안팎이라 합법 확률이 0.66% 뿐이고 나머지는 판을 진행시키지 못한다.
+        워밍업 2만 스텝이 통째로 버려지고 리플레이 버퍼도 쓰레기로 채워진다.
+        """
+        if self.num_timesteps < learning_starts:
+            assert self._last_obs is not None
+            action = self._masked_random(self._last_obs)
+            return action, action          # Discrete 라 스케일링이 없다
+        return super()._sample_action(learning_starts, action_noise, n_envs)
+
+    def predict(self, observation, state=None, episode_start=None, deterministic=False):
+        if deterministic or np.random.rand() >= self.exploration_rate:
+            # super().predict() 를 부르면 안 된다. SB3 의 predict 가 ε 판정을 **한 번 더**
+            # 하고, 그쪽 무작위 분기는 action_space.sample() 이라 마스킹이 없다.
+            # 그러면 실제 불법 수 확률이 (1-ε)*ε 이 되어 ε=0.59 일 때 24% 에 달한다.
+            # policy.predict 는 탐욕 경로라 신경망 안에서 이미 마스킹돼 있다.
+            return self.policy.predict(observation, state, episode_start, deterministic)
+
+        batched = self.policy.is_vectorized_observation(observation)
+        obs = observation if batched else observation[None]
+        action = self._masked_random(obs)
         return (action if batched else action[0]), state
 
 
@@ -88,7 +108,7 @@ def train_model(env, config: TrainConfig):
         exploration_final_eps=0.05,
         max_grad_norm=10.0,
         device=config.device,
-        verbose=1,
+        verbose=config.verbose,
         policy_kwargs=make_policy_kwargs(ROWS, COLS),
         tensorboard_log=str(config.log_dir),
     )

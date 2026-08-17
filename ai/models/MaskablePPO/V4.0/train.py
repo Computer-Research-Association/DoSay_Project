@@ -50,7 +50,7 @@ def train_model(env, config: TrainConfig):
         gamma=0.99,
         ent_coef=0.01,
         device=config.device,
-        verbose=1,
+        verbose=config.verbose,
         policy_kwargs=make_policy_kwargs(ROWS, COLS),
         tensorboard_log=str(config.log_dir),
     )

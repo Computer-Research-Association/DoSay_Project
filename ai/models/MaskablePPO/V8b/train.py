@@ -78,7 +78,7 @@ def train_model(env, config: TrainConfig):
         vf_coef=1.0,        # 탐색이 V 에 의존한다. 가치 정확도에 가중치를 더 준다.
         max_grad_norm=0.5,
         device=config.device,
-        verbose=1,
+        verbose=config.verbose,
         policy_kwargs=make_policy_kwargs(ROWS, COLS),
         tensorboard_log=str(config.log_dir),
     )
