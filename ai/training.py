@@ -20,6 +20,11 @@ DEFAULT_CHECKPOINT_TIMESTEP = 100_000
 MODELS_DIRNAME = "models"
 
 
+def default_n_envs() -> int:
+    """논리 코어 수 - 1. 한 코어는 학습 프로세스 몫으로 남긴다."""
+    return max(1, (os.cpu_count() or 0) - 1)
+
+
 def _cuda_hint() -> str:
     """CPU 전용 빌드일 때 알려줄 재설치 방법."""
     base = torch.__version__.split("+")[0]
@@ -60,6 +65,7 @@ class TrainConfig:
     checkpoint_timestep: int
     n_envs: int
     device: str
+    verbose: int = 0
 
     @property
     def models_dir(self) -> Path:
@@ -76,8 +82,8 @@ class TrainConfig:
 
 
 def model_filename(algorithm: str, version: str, steps: int) -> str:
-    """model_loader 가 파싱하는 파일명 규격: (알고리즘)_V(버전)_(학습스텝)"""
-    return f"{algorithm}_V{version}_{steps}"
+    """model_loader 가 파싱하는 파일명 규격: V(버전)_(알고리즘)_(학습스텝)"""
+    return f"V{version}_{algorithm}_{steps}"
 
 
 def save_model(model, config: TrainConfig, algorithm: str, version: str, steps: int) -> Path:
@@ -88,7 +94,7 @@ def save_model(model, config: TrainConfig, algorithm: str, version: str, steps: 
 
 
 def parse_train_args(version_dir: Path) -> TrainConfig:
-    n_envs_default = max(1, (os.cpu_count() or 0) - 1)
+    n_envs_default = default_n_envs()
 
     parser = argparse.ArgumentParser(description=f"{version_dir.name} AI 학습")
     parser.add_argument("--total-timestep", type=int, default=DEFAULT_TOTAL_TIMESTEP,
@@ -99,6 +105,9 @@ def parse_train_args(version_dir: Path) -> TrainConfig:
                         help="병렬 환경 수 (기본: 논리 코어 수 - 1)")
     parser.add_argument("--device", choices=("auto", "cuda", "cpu"), default="auto",
                         help="auto=있으면 GPU, cuda=없으면 에러로 알림 (기본 auto)")
+    parser.add_argument("--verbose", type=int, choices=(0, 1), default=0,
+                        help="1이면 SB3 표를 매번 출력한다 (기본 0). 0이어도 체크포인트마다 "
+                             "한 줄 찍히고 텐서보드에는 전부 기록된다.")
     args = parser.parse_args()
 
     if min(args.total_timestep, args.checkpoint_timestep, args.n_envs) <= 0:
@@ -115,6 +124,7 @@ def parse_train_args(version_dir: Path) -> TrainConfig:
         checkpoint_timestep=args.checkpoint_timestep,
         n_envs=args.n_envs,
         device=resolve_device(args.device),
+        verbose=args.verbose,
     )
 
 
@@ -142,7 +152,7 @@ class CheckpointSaver(BaseCallback):
     """
 
     def __init__(self, config: TrainConfig, algorithm: str, version: str) -> None:
-        super().__init__()
+        super().__init__(verbose=1)   # verbose=0 이어도 이 한 줄은 남긴다
         self.config = config
         self.algorithm = algorithm
         self.version = version
@@ -152,5 +162,8 @@ class CheckpointSaver(BaseCallback):
             return True
 
         milestone = (self.n_calls // self.config.save_freq) * self.config.checkpoint_timestep
-        save_model(self.model, self.config, self.algorithm, self.version, milestone)
+        path = save_model(self.model, self.config, self.algorithm, self.version, milestone)
+        # SB3 표를 끄면(verbose=0) 화면이 완전히 조용해진다. 살아 있는지 알 수 있도록
+        # 체크포인트마다 한 줄만 남긴다.
+        print(f"[{self.num_timesteps:>12,} steps] {path.name}", flush=True)
         return True

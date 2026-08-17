@@ -134,7 +134,12 @@ class AppleGameEnvBase(gym.Env, ABC):
         act = self.index_to_action[action]
         is_valid, remove_count = self.board.do_action(act)
         if not is_valid:
-            return self._get_obs(), self.invalid_action_reward(), False, False, self._get_info()
+            # 둘 수 없는 수는 판을 바꾸지 못한다. 여기서 terminated/truncated 를 둘 다
+            # False 로 돌려주면 같은 상태 -> 같은 수가 무한히 반복되어 에피소드가 끝나지
+            # 않는다 (스텝만 늘어나므로 겉으로는 학습이 도는 것처럼 보인다).
+            # 액션 마스킹이 걸려 있으면 도달하지 않는 경로이고, 도달했다면 이미 무언가
+            # 잘못된 것이므로 truncated 로 끊어 로그에 드러나게 한다.
+            return self._get_obs(), self.invalid_action_reward(), False, True, self._get_info()
 
         self.last_action = act
         self.step_num += 1
