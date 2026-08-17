@@ -36,6 +36,18 @@ def prompt_int(label: str, default: int, minimum: int = 1) -> int:
             return int(raw)
         print(f"  {minimum:,} 이상의 정수를 입력해주세요. (Enter = {default:,})")
 
+def prompt_yes_no(question: str, default: bool = True) -> bool:
+    suffix = "(Y/n)" if default else "(y/N)"
+    while True:
+        raw = input(f"{question} {suffix} > ").strip().lower()
+        if not raw:
+            return default
+        if raw in ("y", "yes"):
+            return True
+        if raw in ("n", "no"):
+            return False
+        print("  y 또는 n 을 입력해주세요.")
+
 
 ########################################################
 
@@ -50,11 +62,15 @@ def format_value(value) -> str:
 
 
 def format_dataclass_box(title: str, obj) -> str:
-    """dataclass 필드를 label/value로 정렬해 박스 문자열로 반환. 값이 None인 필드는 건너뛴다."""
+    """dataclass 필드를 label/value로 정렬해 박스 문자열로 반환.
+
+    값이 None이거나 metadata에 hidden=True인 필드는 건너뛴다.
+    (원자료는 JSON에 남기되 화면에는 안 띄우고 싶을 때 hidden을 쓴다.)
+    """
     rows = [
         (f.metadata.get("label", f.name), format_value(value))
         for f in fields(obj)
-        if (value := getattr(obj, f.name)) is not None
+        if not f.metadata.get("hidden") and (value := getattr(obj, f.name)) is not None
     ]
     label_width = max(len(label) for label, _ in rows)
     lines = [f"{label:<{label_width}} : {value}" for label, value in rows]

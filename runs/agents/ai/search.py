@@ -64,18 +64,47 @@ class _Node:
 
 
 class ValueBeamSearch:
+    """정책+가치(PPO) 모델과 Q(DQN/QRDQN) 모델을 모두 다룬다.
+
+    Q 모델에서는 잎의 가치가 max_a Q(s,a) 이고 후보 순위도 Q 순이다. 애초에
+    Q 가 '형제 중 어느 쪽이 나은가' 를 학습 목표로 삼기 때문에, V 를 쓰는 쪽보다
+    탐색이 다룰 신호가 낫다.
+    """
+
     def __init__(self, model, env, config: SearchConfig) -> None:
         self.model = model
         self.env = env          # 버전 폴더의 env (관측 인코딩을 여기서 빌린다)
         self.config = config
 
+        policy = model.policy
+        self.quantile_net = getattr(policy, "quantile_net", None)   # QRDQN
+        self.q_net = getattr(policy, "q_net", None)                 # DQN
+        self.is_q_model = self.quantile_net is not None or self.q_net is not None
+
+    def _masked_q(self, observations: list[np.ndarray]) -> np.ndarray:
+        """(N, 행동수) 마스킹된 Q. 불법 수는 신경망 안에서 이미 큰 음수로 눌려 있다."""
+        with torch.no_grad():
+            tensor = obs_as_tensor(np.stack(observations), self.model.device)
+            if self.quantile_net is not None:
+                return self.quantile_net(tensor).mean(dim=1).cpu().numpy()
+            return self.q_net(tensor).cpu().numpy()  # type: ignore[misc]
+
     # ── 환경 빌려쓰기 ────────────────────────────────────────────────────
     # env 의 board 를 잠깐 갈아끼워 그 상태의 관측/마스크를 얻는다.
     # 탐색이 끝나면 원래 board 를 반드시 되돌려 놓는다.
 
-    def _encode(self, board: Board) -> tuple[np.ndarray, np.ndarray]:
+    def _observe(self, board: Board) -> np.ndarray:
         self.env.board = board
-        return self.env._get_obs(), self.env.get_action_mask()
+        return self.env._get_obs()
+
+    def _encode(self, board: Board) -> tuple[np.ndarray, np.ndarray]:
+        """관측 + 마스크. 마스크는 '펼칠' 노드에만 필요하다.
+
+        get_action_mask() 는 합법수 전체를 파이썬으로 훑는다. 자식 160개 전부에
+        대해 부르면 그 비용이 그대로 160배가 되는데, 정작 마스크가 필요한 것은
+        다음 깊이로 넘어가는 빔 6개뿐이다.
+        """
+        return self._observe(board), self.env.get_action_mask()
 
     def _potential(self, board: Board) -> float:
         """셰이핑을 쓰는 환경이면 Φ(s), 아니면 0."""
@@ -86,21 +115,26 @@ class ValueBeamSearch:
         return potential()
 
     def _values(self, observations: list[np.ndarray]) -> np.ndarray:
+        if self.is_q_model:
+            return self._masked_q(observations).max(axis=1)
         with torch.no_grad():
             tensor = obs_as_tensor(np.stack(observations), self.model.device)
             return self.model.policy.predict_values(tensor).squeeze(-1).cpu().numpy()
 
     def _policy_ranking(self, observations, masks, width: int) -> list[list[int]]:
-        """각 상태에서 정책 확률 상위 width 개 행동 인덱스."""
-        with torch.no_grad():
-            distribution = self.model.policy.get_distribution(
-                obs_as_tensor(np.stack(observations), self.model.device),
-                action_masks=np.stack(masks),
-            )
-            probs = distribution.distribution.probs  # type: ignore[union-attr]
+        """각 상태에서 유망한 상위 width 개 행동. Q 모델은 Q 순, 정책 모델은 확률 순."""
+        if self.is_q_model:
+            scores = torch.as_tensor(self._masked_q(observations))
+        else:
+            with torch.no_grad():
+                distribution = self.model.policy.get_distribution(
+                    obs_as_tensor(np.stack(observations), self.model.device),
+                    action_masks=np.stack(masks),
+                )
+                scores = distribution.distribution.probs  # type: ignore[union-attr]
 
         ranking = []
-        for row, mask in zip(probs, masks):
+        for row, mask in zip(scores, masks):
             k = min(width, int(mask.sum()))
             ranking.append(torch.topk(row, k).indices.tolist())
         return ranking
@@ -118,14 +152,19 @@ class ValueBeamSearch:
         cell_count = self.env.total_cell_count
         frontier = [_Node(root_board, 0.0, -1)]
         best_action, best_score = -1, -np.inf
+        fallback = -1
 
         for depth in range(self.config.depth):
             observations, masks = zip(*(self._encode(node.board) for node in frontier))
             ranking = self._policy_ranking(observations, masks, self.config.expand_width(depth))
+            if fallback < 0 and ranking[0]:
+                fallback = ranking[0][0]   # 루트에서 정책이 가장 좋다고 본 합법수
 
             children: list[_Node] = []
-            for node, actions in zip(frontier, ranking):
+            for node, mask, actions in zip(frontier, masks, ranking):
                 for index in actions:
+                    if not mask[index]:
+                        continue   # 불법 수를 펼치면 판이 그대로인 '가짜 자식'이 생긴다
                     board = Board.from_board(node.board.grid)
                     _, removed = board.do_action(self.env.index_to_action[index])
                     children.append(_Node(
@@ -136,8 +175,14 @@ class ValueBeamSearch:
             if not children:
                 break
 
-            child_obs, _ = zip(*(self._encode(child.board) for child in children))
-            values = self._values(list(child_obs))
+            child_obs = [self._observe(child.board) for child in children]
+            values = self._values(child_obs)
+            if not np.isfinite(values).all():
+                raise RuntimeError(
+                    "가치망이 NaN/inf 를 반환했습니다. 학습이 발산한 체크포인트로 보입니다.\n"
+                    "  (탐색 점수가 전부 NaN 이 되면 고를 수가 없어집니다)"
+                )
+
             potentials = np.array([self._potential(child.board) for child in children])
             terminal = np.array([not child.board.get_valid_actions() for child in children])
             values[terminal] = 0.0       # 끝난 판의 남은 가치는 0
@@ -154,4 +199,6 @@ class ValueBeamSearch:
             if not frontier:
                 break
 
-        return best_action
+        # 어떤 이유로도 -1 을 돌려주지 않는다. -1 은 index_to_action[-1] 로 해석되어
+        # 불법 수가 되고, 불법 수는 판을 진행시키지 못해 무한 루프가 된다.
+        return best_action if best_action >= 0 else fallback

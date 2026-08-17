@@ -5,6 +5,9 @@ ai/models/*/*/models/
 ai/models/*/*/checkpoints/
 ai/logs/
 /checkpoints/
+# RunQueue.py / measure.py 가 남기는 벤치마크 기록.
+results/
+docs/
 *.txt
 
 # Byte-compiled / optimized / DLL files

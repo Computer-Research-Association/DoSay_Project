@@ -24,10 +24,19 @@ MODEL_REGISTRY = {
     "DDPG":         ("stable_baselines3", "DDPG",         False),
 }
 
-# 버전 폴더 안의 체크포인트 파일명 규격.
+# 체크포인트 파일명 규격: V(버전)_(알고리즘)_(학습스텝)
 # 버전에 글자를 허용한다 (V8a, V8b 처럼 같은 세대의 변형을 나란히 두기 위해).
-# 밑줄은 일부러 제외 — 이름/버전/스텝 경계가 모호해지면 안 된다.
-_NAME_PATTERN = re.compile(r"^(?P<name>.+)_V(?P<version>[0-9A-Za-z.]+)_(?P<steps>\d+)$")
+# 버전 부분에서 밑줄은 일부러 제외 — 버전/알고리즘/스텝 경계가 모호해지면 안 된다.
+_NAME_PATTERN = re.compile(r"^V(?P<version>[0-9A-Za-z.]+)_(?P<name>.+)_(?P<steps>\d+)$")
+
+# 옛 규격 (알고리즘)_V(버전)_(스텝). 규격을 바꾸기 전에 만들어 둔 체크포인트와,
+# 규격 변경 시점에 이미 돌고 있던 학습이 저장하는 파일을 위해 남겨 둔다.
+# runs/rename_checkpoints.py 로 일괄 변환할 수 있다.
+_LEGACY_PATTERN = re.compile(r"^(?P<name>.+)_V(?P<version>[0-9A-Za-z.]+)_(?P<steps>\d+)$")
+
+
+def _match_name(stem: str) -> re.Match | None:
+    return _NAME_PATTERN.match(stem) or _LEGACY_PATTERN.match(stem)
 
 # train.py 가 체크포인트/최종본 구분 없이 모두 넣어 두는 폴더
 MODELS_DIRNAME = "models"
@@ -45,7 +54,7 @@ def find_checkpoints(version_dir: Path) -> list[Path]:
 
     found: dict[str, tuple[int, Path]] = {}
     for path in candidates:
-        m = _NAME_PATTERN.match(path.stem)
+        m = _match_name(path.stem)
         if m and path.stem not in found:
             found[path.stem] = (int(m.group("steps")), path)
 
@@ -54,7 +63,7 @@ def find_checkpoints(version_dir: Path) -> list[Path]:
 
 def describe_checkpoint(checkpoint: Path) -> str:
     """선택 목록에 보여줄 한 줄 설명."""
-    m = _NAME_PATTERN.match(checkpoint.stem)
+    m = _match_name(checkpoint.stem)
     if m is None:
         return checkpoint.name
     return f"{int(m.group('steps')):>12,} steps   ({m.group('name')})"
@@ -90,11 +99,11 @@ def _load_sibling(version_dir: Path, stem: str):
 
 def _parse_checkpoint_name(ckpt: Path, version_dir: Path) -> tuple[str, str, int]:
     """체크포인트 파일명에서 (알고리즘, 버전, 학습스텝)을 얻고 폴더명과 대조"""
-    m = _NAME_PATTERN.match(ckpt.stem)
+    m = _match_name(ckpt.stem)
     if not m:
         raise ValueError(
             f"파일명 규격을 인식할 수 없습니다: '{ckpt.stem}'\n"
-            f"기대 형식: (모델이름)_V(버전)_(학습횟수)  예) MaskablePPO_V5.0_10000000"
+            f"기대 형식: V(버전)_(모델이름)_(학습횟수)  예) V9b_DQN_12000000"
         )
 
     name = m.group("name")
@@ -181,6 +190,38 @@ def _search_config(env_mod) -> SearchConfig:
     )
 
 
+def _training_only_objects(env_mod) -> dict[str, Any]:
+    """학습 전용 상태를 로드할 때 무엇으로 대체할지. 버전 env.py 가 선언한다.
+
+    SB3 의 model.save() 는 알고리즘 객체의 __dict__ 를 통째로 직렬화한다. 그래서
+    학습 중에만 쓰는 보조 상태(교사용 env, 모방 버퍼 같은 것)까지 체크포인트에
+    들어간다. 그중 **버전 폴더의 env.py 에 정의된 클래스**의 인스턴스는 특히 위험하다.
+
+    학습할 때는 train.py 가 sys.path 에 버전 폴더를 넣고 `import env` 를 하므로
+    그 클래스의 모듈 이름이 최상위 'env' 가 된다. cloudpickle 은 import 가능한
+    모듈의 클래스를 **참조로** 저장하므로 체크포인트에는 "모듈 env 의 클래스"라고만
+    적힌다. 그런데 measure.py 는 버전마다 env.py 를 `_version_<버전>_env` 라는 다른
+    이름으로 로드하므로 'env' 라는 모듈이 존재하지 않고, 역직렬화가
+    ModuleNotFoundError: No module named 'env' 로 죽는다. (실제로 QRDQN/V10c 가
+    이 경로로 로드 불가 상태였다.)
+
+    train.py 에 정의된 클래스는 같은 문제가 없다. __main__ 의 클래스는 cloudpickle 이
+    **값으로** 저장하기 때문이다 — DQN/V10b 의 EliteBuffer 가 멀쩡한 이유다.
+
+    근본 대책은 train.py 의 _excluded_save_params() 에 그 속성을 넣어 애초에
+    저장하지 않는 것이고, 여기 있는 것은 **그 전에 만들어진 체크포인트를 재학습 없이
+    살리기 위한 통로**다. SB3 의 json_to_data 는 custom_objects 에 키가 있으면
+    역직렬화를 아예 건너뛰므로, 깨진 값이 들어 있어도 로드가 성공한다.
+    """
+    declared = getattr(env_mod, "LOAD_CUSTOM_OBJECTS", {})
+    if not isinstance(declared, dict):
+        raise TypeError(
+            f"LOAD_CUSTOM_OBJECTS 는 dict 여야 합니다: {type(declared).__name__}\n"
+            "  예) LOAD_CUSTOM_OBJECTS = {'_search_env': None, 'expert_obs': []}"
+        )
+    return dict(declared)
+
+
 def load_model(source: Path, grid_shape: tuple[int, int], device: str = "cpu"):
     """체크포인트(또는 버전 폴더)에서 (모델, 환경, 정보, 탐색설정)을 복원"""
     rows, cols = grid_shape
@@ -198,6 +239,7 @@ def load_model(source: Path, grid_shape: tuple[int, int], device: str = "cpu"):
     custom_objects: dict[str, Any] = {
         "policy_class": model_mod.POLICY_CLASS,
         "policy_kwargs": model_mod.make_policy_kwargs(rows, cols),
+        **_training_only_objects(env_mod),
     }
 
     _, params, _ = load_from_zip_file(ckpt, load_data=False, device=device)

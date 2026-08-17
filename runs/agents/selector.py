@@ -55,6 +55,18 @@ AGENT_REGISTRY: dict[str, tuple[Type[Agent], Callable[[Path], Path]]] = {
 }
 
 
+def agent_class_for(source: Path) -> Type[Agent]:
+    """경로만 보고 에이전트 종류를 정한다 (대화형 선택 없이 쓰는 경로용)."""
+    if source.suffix == ".zip":
+        return AIAgent
+    if source.suffix == ".py":
+        return AlgoAgent
+    raise ValueError(
+        f"에이전트 종류를 알 수 없습니다: {source}\n"
+        "AI 는 체크포인트(.zip), algorithm 은 모델 파일(.py) 이어야 합니다."
+    )
+
+
 def select_agent(agents_dir: Path) -> Tuple[Type[Agent], Path]:
     types = list(AGENT_REGISTRY.keys())
     agent_type = types[select_from("Select Agent Type", types)]
