@@ -46,12 +46,16 @@ BEAM_BASELINE = 131.77          # V15@50k + 빔 W=1024 + top-8, 25초/판
 BUDGET_LIMIT = 60.0             # 빔 계열 규칙
 
 
+VALUE_CACHE = False        # main() 이 --value-cache 로 덮어쓴다
+
+
 def build(preset: str, budget: float, net):
     """프리셋 이름 -> (엔진, 설정, 이름). 신경망 쪽과 대조군을 짝으로 둔다."""
     hand = localsearch.hand_eval(net.index)
     # 2차 배치와 같은 조건을 유지한다 (적응은 3차 프리셋에서만 켠다)
     ls = dict(budget_sec=budget, init_width=1024, init_topk=8,
-              repair_width=64, repair_topk=8, ruin_adaptive=False)
+              repair_width=64, repair_topk=8, ruin_adaptive=False,
+              value_cache=VALUE_CACHE)
     # 첫 빔을 싸게 하고 남는 시간을 전부 탐색에 쓰는 쪽 (21초 -> 3초)
     fast = {**ls, "init_width": 256}
 
@@ -125,6 +129,13 @@ def build(preset: str, budget: float, net):
                            "ruin_adaptive": True},
                     "국소탐색 · 어디든 부수기"),
 
+        # 첫 빔을 절반으로. cut-all 과 같고 init_width 만 512 다 (점수 -1 각오,
+        # 시간 -20%). 근거: fast-mixed(W=256) 가 133.32 로 cut-all 보다 1.7 낮다
+        "cut-all-512": ("ls", {**ls, "accept": "anneal", "destroy": "mixed",
+                               "cut_lo": 0.0, "ruin_min": 5, "ruin_max": 20,
+                               "ruin_adaptive": True, "init_width": 512},
+                        "국소탐색 · 어디든 부수기 · 첫 빔 W=512"),
+
         # 첫 빔을 싸게 (예산 배분 실험)
         "fast-mixed": ("ls", {**fast, "accept": "anneal", "destroy": "mixed"},
                        "국소탐색 · 싼첫빔 · 섞기 · 어닐링"),
@@ -179,7 +190,22 @@ def main() -> int:
                         help="판당 국소탐색 예산(초). 첫 빔 시간이 여기 포함된다")
     parser.add_argument("--base-seed", type=int, default=BASE_SEED)
     parser.add_argument("--progress-every", type=int, default=5)
-    parser.add_argument("--device", choices=("auto", "cuda", "cpu"), default="auto")
+    parser.add_argument("--device", choices=("auto", "cuda", "mps", "cpu"),
+                        default="auto")
+    parser.add_argument("--fp16", action="store_true",
+                        help="인코더를 반정밀도로. CUDA(텐서코어)/MPS 공통. "
+                             "가치/정책 헤드는 fp32 그대로다")
+    parser.add_argument("--prefilter", type=int, default=0, metavar="N",
+                        help="2단 평가. 자식을 싼 평가로 폭xN 개까지 추린 뒤 "
+                             "가치망에 넣는다. 0 이면 끔 (기본)")
+    parser.add_argument("--value-cache", action="store_true",
+                        help="같은 판을 두 번 평가하지 않는다. 결과는 완전히 같다 "
+                             "(실측 평가의 38.5%% 가 중복). GPU 에서 남는 장사인지 A/B 할 것")
+    parser.add_argument("--eval-chunk", type=int, default=0, metavar="N",
+                        help="한 번에 평가할 자식 수. 0 이면 모델 기본값(4096)")
+    parser.add_argument("--shard", metavar="i/n",
+                        help="판을 n 등분해 i 번째만 돈다 (0부터). 프로세스 여러 개로 "
+                             "나눠 돌린 뒤 runs/merge_shards.py 로 합친다")
     parser.add_argument("--seed", type=int, default=0, help="탐색의 난수 씨앗")
     parser.add_argument("--budget-limit", type=float, default=BUDGET_LIMIT,
                         help="이 시간을 넘으면 실패로 찍는다. 예산이 병목인지 "
@@ -193,6 +219,27 @@ def main() -> int:
     if not hasattr(net, "plan"):
         raise SystemExit("V15 계열 체크포인트가 필요합니다 (plan() 이 없습니다).")
 
+    # ── 속도 손잡이 (2026-08-18). 기본값은 전부 꺼져 있어 옛 숫자가 그대로 나온다 ──
+    if args.fp16:
+        if device == "cpu":
+            raise SystemExit("--fp16 은 cuda/mps 에서만 의미가 있습니다.")
+        net.autocast_dtype = torch.float16
+    net.prefilter_mult = args.prefilter
+    if args.eval_chunk:
+        net.eval_chunk = args.eval_chunk
+
+    shard = None
+    if args.shard:
+        try:
+            part, total = (int(v) for v in args.shard.split("/"))
+        except ValueError:
+            raise SystemExit(f"--shard 는 i/n 꼴이어야 합니다: {args.shard!r}")
+        if not 0 <= part < total:
+            raise SystemExit(f"--shard 범위가 이상합니다: {args.shard}")
+        shard = (part, total)
+
+    global VALUE_CACHE
+    VALUE_CACHE = args.value_cache
     engine, cfg, label = build(args.preset, args.budget, net)
     module = localsearch if engine == "ls" else nrpa
     uses_neural = (cfg.evaluate is None if engine == "ls"
@@ -213,11 +260,25 @@ def main() -> int:
               f"alpha {cfg.alpha}, 정책사전 {cfg.prior_weight}, "
               f"빔시드 {'O' if cfg.seed_with_beam else 'X'}")
     print(f"신경망 사용: {'O' if uses_neural else 'X (순수 대조군)'}")
+    knobs = [f"fp16 {'O' if args.fp16 else 'X'}",
+             f"2단평가 {args.prefilter if args.prefilter else 'X'}",
+             f"값캐시 {'O' if args.value_cache else 'X'}",
+             f"eval_chunk {net.eval_chunk}"]
+    if shard is not None:
+        knobs.append(f"분할 {shard[0]}/{shard[1]}")
+    print("속도 손잡이: " + ", ".join(knobs))
     print(f"기준선     : 빔 단독 {BEAM_BASELINE} (같은 100판)\n", flush=True)
+
+    episode_ids = list(range(args.episodes))
+    if shard is not None:
+        # 이어서 자르지 않고 번갈아 가른다 — 판마다 난이도가 다르므로 이래야
+        # 조각별 평균이 서로 비슷해지고 중간 진행 상황이 읽을 만해진다
+        episode_ids = [i for i in episode_ids if i % shard[1] == shard[0]]
+    n_total = len(episode_ids)
 
     scores, inits, iters, init_secs = [], [], [], []
     t_destroy, t_repair, start = [], [], time.time()
-    for i in range(args.episodes):
+    for done, i in enumerate(episode_ids, 1):
         grid = torch.as_tensor(Board.from_seed((ROWS, COLS), args.base_seed + i).grid,
                                dtype=torch.float32, device=device)
         run_cfg = type(cfg)(**{**cfg.__dict__, "seed": args.seed + i})
@@ -228,17 +289,16 @@ def main() -> int:
         iters.append(work); init_secs.append(res.init_sec)
         t_destroy.append(getattr(res, "t_destroy", 0.0))
         t_repair.append(getattr(res, "t_repair", 0.0))
-        done = i + 1
         if args.progress_every and (done == 1 or done % args.progress_every == 0):
             rate = (time.time() - start) / done
             unit = "반복" if engine == "ls" else "롤아웃"
-            print(f"    [{done:>4}/{args.episodes}] 평균 {np.mean(scores):6.2f} "
+            print(f"    [{done:>4}/{n_total}] 평균 {np.mean(scores):6.2f} "
                   f"(시작 {np.mean(inits):6.2f}, 이득 {np.mean(scores)-np.mean(inits):+5.2f}, "
                   f"{unit} {np.mean(iters):.0f}회)  판당 {rate:.1f}s, "
-                  f"남은 시간 약 {int(rate * (args.episodes - done))}s", flush=True)
+                  f"남은 시간 약 {int(rate * (n_total - done))}s", flush=True)
 
     elapsed = time.time() - start
-    per = elapsed / args.episodes
+    per = elapsed / n_total
     s, b = np.array(scores, float), np.array(inits, float)
 
     print(f"\n{'':<12}{'점수':>9}{'std':>8}{'판당':>9}")
@@ -265,8 +325,14 @@ def main() -> int:
         "config": {k: v for k, v in cfg.__dict__.items() if k != "evaluate"},
         "work_unit": "iterations" if engine == "ls" else "rollouts",
         "uses_neural": uses_neural,
-        "episodes": args.episodes,
+        "episodes": n_total,
         "base_seed": args.base_seed,
+        # 조각으로 나눠 돌렸을 때 합칠 수 있도록 실제로 돈 판을 남긴다
+        "seeds": [args.base_seed + i for i in episode_ids],
+        "shard": list(shard) if shard is not None else None,
+        "knobs": {"fp16": bool(args.fp16), "prefilter": args.prefilter,
+                  "value_cache": bool(args.value_cache),
+                  "eval_chunk": int(net.eval_chunk), "device": device},
         "avg_score": round(float(s.mean()), 2),
         "std_score": round(float(s.std(ddof=1)), 2),
         "avg_init_score": round(float(b.mean()), 2),
@@ -282,8 +348,9 @@ def main() -> int:
         "scores": [int(v) for v in scores],
         "init_scores": [int(v) for v in inits],
     }
+    tag = f"_shard{shard[0]}of{shard[1]}" if shard is not None else ""
     path = (RESULT_DIR /
-            f"search_{args.preset}_{source.stem}_seed{args.base_seed}_"
+            f"search_{args.preset}_{source.stem}_seed{args.base_seed}{tag}_"
             f"{now.strftime('%Y%m%d-%H%M%S')}.json")
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"-> {path.name}")

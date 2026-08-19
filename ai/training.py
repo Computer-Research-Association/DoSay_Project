@@ -37,6 +37,12 @@ def _cuda_hint() -> str:
     )
 
 
+def mps_available() -> bool:
+    """Apple Silicon 가속. torch 빌드에 따라 backends.mps 자체가 없을 수 있다."""
+    backend = getattr(torch.backends, "mps", None)
+    return bool(backend is not None and backend.is_available())
+
+
 def resolve_device(requested: str) -> str:
     """SB3 는 device='cuda' 인데 CUDA 가 없으면 조용히 CPU 로 돌린다.
 
@@ -44,16 +50,28 @@ def resolve_device(requested: str) -> str:
     """
     if requested == "cuda" and not torch.cuda.is_available():
         raise SystemExit("CUDA 를 요청했지만 사용할 수 없습니다.\n" + _cuda_hint())
+    if requested == "mps" and not mps_available():
+        raise SystemExit("MPS 를 요청했지만 사용할 수 없습니다 "
+                         "(Apple Silicon + torch MPS 빌드가 필요합니다).")
     if requested == "auto":
-        return "cuda" if torch.cuda.is_available() else "cpu"
+        if torch.cuda.is_available():
+            return "cuda"
+        return "mps" if mps_available() else "cpu"
     return requested
 
 
 def describe_device(device: str) -> str:
     if device == "cuda":
         return f"GPU 학습: {torch.cuda.get_device_name(torch.cuda.current_device())}"
+    if device == "mps":
+        # MPS 는 미지원 연산을 조용히 CPU 로 떨어뜨린다. 폴백이 있으면 다른 어떤
+        # 최적화보다 그것이 시간을 지배하므로, 한 번은 폴백을 끄고 돌려 볼 것.
+        return ("GPU 학습: Apple Silicon (MPS). "
+                "PYTORCH_ENABLE_MPS_FALLBACK 을 끄고 한 번 확인할 것")
     if torch.cuda.is_available():
         return "CPU 학습 (CUDA 가 있는데도 --device cpu 로 지정됨)"
+    if mps_available():
+        return "CPU 학습 (MPS 가 있는데도 --device cpu 로 지정됨)"
     # 한글 콘솔(cp949)에서 인코딩할 수 없는 문자를 출력하면 죽는다. em-dash 금지.
     return "CPU 학습. GPU 를 쓰려면:\n" + _cuda_hint()
 

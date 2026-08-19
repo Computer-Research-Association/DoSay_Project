@@ -3,7 +3,8 @@
     교사 폭 실험용. 학습 전용이므로 top-k 는 0.
     구조는 V15 와 같고 BEAM_WIDTH=128, POLICY_TOPK=0 만 다르다.
 
-고칠 일이 있으면 `ai/models/DQN/V15/model.py` 를 고치고 다시 생성한다.
+고칠 일이 있으면 `ai/models/DQN/V15/model.py` 를 고치고
+`python ai/models/DQN/V15/generate_twins.py` 를 다시 돌린다.
 """
 
 """DQN V15 신경망 — **정책이 탐색을 좁힌다.** V14 에서 딱 이것이 빠져 있었다.
@@ -71,6 +72,7 @@ V15 가 바꾸는 것
 판 -> 수 사전으로 캐시해 두었다가 꺼내 쓴다.
 """
 
+import contextlib
 import math
 
 import numpy as np
@@ -110,6 +112,9 @@ AFTERSTATE_CHUNK = 1024
 # 표본별로 계산되므로 배치 크기에 의존하지 않는다.
 EVAL_CHUNK = 4096
 PLAN_CACHE_LIMIT = 20_000
+# 값 캐시가 들고 있을 판 수의 상한. 넘으면 통째로 비운다.
+# 한 판에 서로 다른 판이 대략 100만 개 나온다 (폭 1024/top-8 + 복구 50회 기준).
+VALUE_CACHE_LIMIT = 1_500_000
 
 # ── 정책이 탐색을 좁힌다 (V15 의 핵심) ───────────────────────────────────
 # V14 의 빔은 노드마다 **합법수 전부**(평균 28.5개)를 가치망에 넣었다. 정책 헤드는
@@ -133,9 +138,38 @@ LABEL_TOPK = 8           # 정책 목표에 담을 자식 수
 LABEL_FILL = 1.0e4       # 자식이 없는 슬롯 (softmax 에서 0 이 된다)
 MAX_VALUE_ROWS = 4096    # 판당 가치 라벨 상한. 앞쪽 판은 빔 수만큼 중복된다
 
+# ── 속도 손잡이 (2026-08-18) ─────────────────────────────────────────────
+# 판당 56초를 줄이려고 넣었다. **결과를 바꾸는 것만 여기에 있다** — 계산이 완전히
+# 같은 최적화(테두리 1차원 prefix, 마스크 물려받기, 비트팩 중복 제거)는 손잡이
+# 없이 항상 켜져 있고, `ai/verify/verify_fast.py` 가 옛 구현과 대조한다.
+#
+# 아래 둘은 기본값이 "끔" 이다. 켜지 않으면 131.77 / 135.00 이 그대로 재현된다.
+
+# 2단 평가. 0 이면 끈다. n>0 이면 자식을 **싼 평가로 폭 x n 개까지 추린 뒤**
+# 살아남은 것만 가치망에 넣는다. 신경망 호출이 대략 (자식수)/(폭 x n) 배 준다.
+#
+# 근거: 정책 top-8 가지치기가 top-1 recall 0.474 로도 통했다 (search-history §5.1).
+# "폭이 이미 중복을 제공하므로 한 노드에서 최선을 놓쳐도 다른 노드가 덮는다" 는
+# 같은 논리가 여기에도 적용된다. **다만 아직 100판으로 재지 않았다.**
+PREFILTER_MULT = 0
+PREFILTER_W_LEGAL = 2.5   # 싼 평가 = 남은 사과 - w x 합법수. hand_eval 과 같은 식
+
+# 학습에서는 절대 켜지 않는다. 정책 목표가 싼 평가의 선택으로 편향된다
+# (V12 의 자기확인 고리와 같은 함정). plan(collect=True) 이면 강제로 꺼진다.
+
 
 def prefix_sum(plane: torch.Tensor) -> torch.Tensor:
     return F.pad(plane, (1, 0, 1, 0)).cumsum(dim=-2).cumsum(dim=-1)
+
+
+def row_prefix(plane: torch.Tensor) -> torch.Tensor:
+    """행마다의 누적합. (M, R, C) -> (M, R, C+1). 한 **행** 구간을 2회 읽기로."""
+    return F.pad(plane, (1, 0)).cumsum(dim=-1)
+
+
+def col_prefix(plane: torch.Tensor) -> torch.Tensor:
+    """열마다의 누적합. (M, R, C) -> (M, R+1, C). 한 **열** 구간을 2회 읽기로."""
+    return F.pad(plane, (0, 0, 1, 0)).cumsum(dim=-2)
 
 
 def grid_from_obs(observations: torch.Tensor) -> torch.Tensor:
@@ -178,15 +212,116 @@ class RectIndex(nn.Module):
     def total(self, prefix) -> torch.Tensor:
         return self._area(prefix, self.r_lo, self.c_lo, self.r_hi, self.c_hi)
 
-    def legal_mask_from_grid(self, grids: torch.Tensor) -> torch.Tensor:
-        prefix = prefix_sum(grids)
-        total = self.total(prefix)
-        top = self._area(prefix, self.r_lo, self.c_lo, self.r_lo + 1, self.c_hi)
-        bottom = self._area(prefix, self.r_hi - 1, self.c_lo, self.r_hi, self.c_hi)
-        left = self._area(prefix, self.r_lo, self.c_lo, self.r_hi, self.c_lo + 1)
-        right = self._area(prefix, self.r_lo, self.c_hi - 1, self.r_hi, self.c_hi)
-        return ((total - TARGET_SUM).abs() < 0.5) & (top > 0) & (bottom > 0) & (left > 0) & (right > 0)
+    @staticmethod
+    def _row_seg(rowp, r, c_lo, c_hi) -> torch.Tensor:
+        """행 r 의 [c_lo, c_hi) 구간 합. 2회 읽기."""
+        return rowp[:, r, c_hi] - rowp[:, r, c_lo]
 
+    @staticmethod
+    def _col_seg(colp, c, r_lo, r_hi) -> torch.Tensor:
+        """열 c 의 [r_lo, r_hi) 구간 합. 2회 읽기."""
+        return colp[:, r_hi, c] - colp[:, r_lo, c]
+
+    def legal_mask_from_grid(self, grids: torch.Tensor) -> torch.Tensor:
+        """합 10 이고 네 변이 비어 있지 않은 사각형. `game.Board` 와 같아야 한다.
+
+        ── 왜 이렇게 생겼는가 (2026-08-18) ────────────────────────────────
+        실측: `observation()` 의 **94%** 가 이 함수 하나이고, 그 안은 계산이 아니라
+        **읽기**다. 그래서 두 번 줄였다.
+
+        **(1) 테두리는 1차원이다.** 옛 구현은 다섯 영역을 전부 2차원 prefix 로 쟀다
+        (사각형당 20회 읽기). 그런데 테두리 넷은 전부 한 **행** 아니면 한 **열**이라
+        행/열 방향 누적을 따로 두면 각각 4회가 2회가 된다. 20 -> 12 회.
+
+        **(2) 테두리는 합이 10 인 것만 보면 된다.** 실측(min-area 5판, 244국면)에서
+        `total == 10` 인 사각형은 7,533개 중 **평균 37개 = 0.5%** 다. 나머지 99.5%는
+        테두리를 봐도 어차피 불법이다. 그래서 `total` 만 조밀하게(4회) 재고 테두리
+        8회는 **후보에만** 한다. 읽기가 12 -> 실질 4회가 된다.
+
+        덤으로 (M, 7533) 짜리 실수 텐서가 한 번에 **하나만** 산다. 옛 구현은 다섯 개를
+        동시에 들고 있었고 폭 1024/top-8 에서 그것만 1.2GB 였다 (8GB 카드에서 이게
+        VRAM 넘김 사고의 원인이었을 가능성이 크다).
+
+        **결과는 옛 구현과 완전히 같다** (`ai/verify/verify_fast.py` 가 대조한다).
+        판 값이 0~9 정수이고 합이 810 이하라 float32 로 정확히 표현된다.
+
+        비용은 `nonzero()` 하나다. CUDA 에서는 개수를 호스트로 가져오느라 동기화가
+        걸린다. `plan()` 은 이미 깊이마다 동기화하므로(dead 판정, m.nonzero) 새로
+        생기는 정체는 아니지만, 프로파일에서 이게 잡히면 후보 압축을 배치 전체에
+        대해 한 번만 하도록 바꿀 수 있다.
+        """
+        ok = (self.total(prefix_sum(grids)) - TARGET_SUM).abs() < 0.5
+        board_idx, act_idx = ok.nonzero(as_tuple=True)
+        if act_idx.numel() == 0:
+            return ok
+
+        r_lo, c_lo = self.r_lo[act_idx], self.c_lo[act_idx]
+        r_hi, c_hi = self.r_hi[act_idx], self.c_hi[act_idx]
+
+        rowp = row_prefix(grids)                       # 한 행 구간 = 2회 읽기
+        tight = (rowp[board_idx, r_lo, c_hi] - rowp[board_idx, r_lo, c_lo]) > 0    # top
+        tight &= (rowp[board_idx, r_hi - 1, c_hi]
+                  - rowp[board_idx, r_hi - 1, c_lo]) > 0                            # bottom
+        del rowp
+
+        colp = col_prefix(grids)                       # 한 열 구간 = 2회 읽기
+        tight &= (colp[board_idx, r_hi, c_lo] - colp[board_idx, r_lo, c_lo]) > 0    # left
+        tight &= (colp[board_idx, r_hi, c_hi - 1]
+                  - colp[board_idx, r_lo, c_hi - 1]) > 0                            # right
+
+        ok[board_idx, act_idx] = tight
+        return ok
+
+    def legal_mask_chunked(self, grids: torch.Tensor, chunk: int) -> torch.Tensor:
+        """같은 것을 잘라서 잰다. 결과는 완전히 같고 VRAM 봉우리만 낮아진다."""
+        if chunk <= 0 or grids.shape[0] <= chunk:
+            return self.legal_mask_from_grid(grids)
+        return torch.cat([self.legal_mask_from_grid(grids[s:s + chunk])
+                          for s in range(0, grids.shape[0], chunk)])
+
+    @staticmethod
+    def pack_keys(grids: torch.Tensor) -> torch.Tensor:
+        """판을 점유 162비트로 압축한다. (M, R, C) -> (M, 3) int64.
+
+        중복 제거와 값 캐시가 같은 키를 쓴다. 63비트씩 담는 이유는 부호 비트를
+        건드리지 않기 위해서다.
+
+        **뿌리가 같은 판들 사이에서만 판을 결정한다** (지운 칸만 0 이 되므로).
+        """
+        n = grids.shape[0]
+        occ = (grids.reshape(n, -1) != 0)
+        pad = (-occ.shape[1]) % 63
+        if pad:
+            occ = F.pad(occ, (0, pad))
+        words = occ.view(n, -1, 63).to(torch.int64)
+        shift = torch.arange(63, device=grids.device, dtype=torch.int64)
+        return torch.bitwise_left_shift(words, shift).sum(dim=-1)
+
+    @staticmethod
+    def dedup_indices(grids: torch.Tensor) -> torch.Tensor:
+        """중복 판을 걷어낸 대표 인덱스. **지운 칸 집합이 같으면 점수도 같다.**
+
+        옛 구현은 `np.unique(children, axis=0)` 이라 스텝마다 판 전부를 CPU 로
+        내리고(폭 1024/top-8 이면 5.3MB) 호스트에서 162열 lexsort 를 돌렸다
+        (실측 M=8192 에서 22.9ms). 칸은 지워지기만 하므로 **점유 여부 162비트**면
+        판이 완전히 정해진다. 63비트씩 int64 세 개로 팩해서 장치 위에서 끝낸다.
+
+        **전제: 넘기는 판들이 전부 같은 뿌리에서 나왔어야 한다.** 그때만 "점유가
+        같다 => 판이 같다" 가 성립한다 (지워진 칸만 0 이 되므로). 빔의 자식들은
+        정의상 그렇다. 다른 판에서 온 것을 섞으면 조용히 판을 잃는다 — 예를 들어
+        서로 다른 seed 의 **시작 판**은 값이 전부 다른데 점유는 똑같이 꽉 차 있다.
+
+        대표는 옛 구현과 같게 **그룹 안 최소 원본 인덱스**로 고른다. 다른 것은
+        그룹의 나열 순서뿐이고, 그건 뒤따르는 `argsort` 의 동점 처리에만 닿는다.
+        """
+        n = grids.shape[0]
+        keys = RectIndex.pack_keys(grids)
+        _, inverse = torch.unique(keys, dim=0, return_inverse=True)
+        first = torch.full((int(inverse.max()) + 1,), n, dtype=torch.long,
+                           device=grids.device)
+        first.scatter_reduce_(0, inverse, torch.arange(n, device=grids.device),
+                              reduce="amin", include_self=True)
+        return first
 
     def legal_actions_on(self, grid: torch.Tensor, actions: torch.Tensor) -> torch.Tensor:
         """판 하나에서 **지정한 행동들만** 합법인지 본다. (A,) 불리언.
@@ -220,25 +355,37 @@ class RectIndex(nn.Module):
                   & (cols < self.c_hi[action_idx][:, None, None]))
         return grids.masked_fill(inside, 0.0)
 
-    def observation(self, grids: torch.Tensor) -> torch.Tensor:
-        """(M, R, C) -> (M, 13, R, C). env._get_obs() 와 원소 단위로 같아야 한다."""
+    def observation(self, grids: torch.Tensor,
+                    mask: torch.Tensor | None = None) -> torch.Tensor:
+        """(M, R, C) -> (M, 13, R, C). env._get_obs() 와 원소 단위로 같아야 한다.
+
+        `mask` 를 넘기면 합법 판정을 다시 하지 않는다. 빔은 자식의 마스크를 이미
+        갖고 있는데(가지치기·2단 평가에 쓴다) 옛 구현은 여기서 한 번 더 쟀다.
+        """
         m, rows, cols = grids.shape[0], self.rows, self.cols
-        weight = self.legal_mask_from_grid(grids).to(grids.dtype)
+        if mask is None:
+            mask = self.legal_mask_from_grid(grids)
+        weight = mask.to(grids.dtype)
 
         diff = grids.new_zeros(m, (rows + 1) * (cols + 1))
+        # alpha=-1 로 빼면 `-weight` 를 두 번 만들지 않아도 된다.
+        # weight 는 (M, 7533) 이라 자식 8,192개면 하나가 247MB 다.
         diff.index_add_(1, self.corner_tl, weight)
-        diff.index_add_(1, self.corner_tr, -weight)
-        diff.index_add_(1, self.corner_bl, -weight)
+        diff.index_add_(1, self.corner_tr, weight, alpha=-1)
+        diff.index_add_(1, self.corner_bl, weight, alpha=-1)
         diff.index_add_(1, self.corner_br, weight)
         density = diff.view(m, rows + 1, cols + 1).cumsum(1).cumsum(2)[:, :rows, :cols]
 
-        digits = torch.arange(N_DIGITS, device=grids.device, dtype=grids.dtype)
         obs = grids.new_zeros(m, N_DIGITS + 3, rows, cols)
-        obs[:, :N_DIGITS] = (grids.round()[:, None] == digits[None, :, None, None]).to(grids.dtype)
+        # 원핫은 scatter 한 번이다. 옛 구현은 (M, 10, R, C) 짜리 비교 텐서를 따로
+        # 만들고 float 으로 바꿨다 (자식 8,192개면 그것만 480MB, 커널도 넷).
+        obs[:, :N_DIGITS].scatter_(1, grids.round().long().unsqueeze(1), 1.0)
 
         peak = density.amax(dim=(1, 2), keepdim=True)
-        obs[:, N_DIGITS] = torch.where(peak > 0, density / peak.clamp(min=1.0),
-                                       torch.zeros_like(density))
+        # density >= 0 이고 peak 이 그 최대이므로 **peak == 0 이면 density 도 전부 0**
+        # 이다. 그래서 나눗셈만으로 옛 `torch.where(peak > 0, ..., zeros)` 와 값이
+        # 완전히 같다 (0/1 = 0). where 와 zeros_like 가 통째로 없어진다.
+        obs[:, N_DIGITS] = density / peak.clamp(min=1.0)
         obs[:, N_DIGITS + 1] = (torch.log1p(density) / DENSITY_LOG_SCALE).clamp(max=1.0)
         obs[:, N_DIGITS + 2] = (weight.sum(dim=1) / VALID_ACTION_SCALE).clamp(max=1.0)[:, None, None]
         return obs
@@ -352,14 +499,39 @@ class TeacherDistilledQNetwork(QNetwork):
         self.policy_net = RectangleHead(self.rows, self.cols, self.embed_dim,
                                         self.index, head_dim)
         self._plan_cache: dict[bytes, int] = {}
+        # ── 속도 손잡이 (인스턴스마다 다르게 줄 수 있다) ────────────────
+        # autocast_dtype: None 이면 fp32. torch.float16 을 넣으면 인코더만 반정밀도로
+        #   돈다. CUDA(텐서코어)와 MPS 가 **같은 한 줄로** 처리되므로 장치에 안 묶인다.
+        #   가치 헤드와 정책 헤드는 fp32 그대로다 — 잔여 사과를 fp16 으로 재면
+        #   162 근처에서 눈금이 0.125 라 형제 간 동점이 인위적으로 생긴다.
+        #   인코더가 FLOP 의 99.8% (100.0 / 100.2 MFLOP) 이므로 잃는 것도 없다.
+        # eval_chunk: 한 번에 평가할 자식 수. 결과는 같고 VRAM 봉우리만 낮아진다.
+        self.autocast_dtype: torch.dtype | None = None
+        self.eval_chunk: int = EVAL_CHUNK
+        self.prefilter_mult: int = PREFILTER_MULT
+        # 값 캐시. dict 를 넣으면 켜진다 (localsearch.solve 가 판마다 새로 넣는다).
+        # 신경망은 결정론적이므로 **결과가 완전히 같다** — 손잡이지만 근사가 아니다.
+        self.value_cache: dict[bytes, float] | None = None
+        self.value_cache_limit: int = VALUE_CACHE_LIMIT
         # 학습 때만 켠다. 빔이 한 판을 계획할 때 나오는 라벨을 여기에 쌓아 두고
         # train.py 가 꺼내 간다 (배포 때는 항상 비어 있다).
         self.collect_labels = False
         self.pending_labels: list[dict] = []
 
     # ── 기본 경로 ────────────────────────────────────────────────────────
+    def _autocast(self):
+        """인코더를 반정밀도로 돌린다. 켜는 곳은 여기 한 군데뿐이다."""
+        dtype = self.autocast_dtype
+        device_type = self.index.r_lo.device.type
+        if dtype is None or device_type not in ("cuda", "mps"):
+            return contextlib.nullcontext()
+        return torch.autocast(device_type=device_type, dtype=dtype)
+
     def _cells(self, obs: torch.Tensor) -> torch.Tensor:
-        features = self.extract_features(obs, self.features_extractor)
+        with self._autocast():
+            features = self.extract_features(obs, self.features_extractor)
+        # 헤드는 fp32 로 돌린다 (위 autocast_dtype 주석 참고)
+        features = features.float()
         return features.view(features.shape[0], self.embed_dim, self.rows, self.cols)
 
     def policy_logits(self, obs: torch.Tensor) -> torch.Tensor:
@@ -393,18 +565,91 @@ class TeacherDistilledQNetwork(QNetwork):
         out[state_idx, action_idx] = (self.n_cells - torch.cat(values)) / self.n_cells
         return out
 
+    @torch.no_grad()
+    def _evaluate_cached(self, evaluate, children: torch.Tensor,
+                         child_mask: torch.Tensor | None) -> torch.Tensor:
+        """같은 판을 두 번 평가하지 않는다. **값이 완전히 같다.**
+
+        신경망은 결정론적이므로 근사가 아니라 재사용이다.
+
+        실측(2026-08-18, 국소탐색 56회 반복): 가치망 평가 99,767회 중 **38.5%가
+        이미 본 판**이었다. 그리고 그 중복은 **전부 복구 단계에서** 나온다 —
+        첫 빔은 깊이 d 의 판이 정확히 10d 만큼 지운 것이라 다른 깊이와 겹칠 수가
+        없고, 같은 깊이 안은 `dedup_indices` 가 이미 걷어낸다. 복구가 판당 시간의
+        대부분이므로(예산 32초 실행에서 25.0/32.3초) 여기가 값이 있는 자리다.
+
+        캐시는 **판 하나 동안만** 산다 (`localsearch.solve()` 가 새로 넣는다).
+        키가 점유 비트라 뿌리가 다르면 뜻이 달라지기 때문이다 (`pack_keys` 참고).
+
+        비용은 스텝마다의 키 D2H(자식당 24바이트)와 파이썬 dict 조회다. GPU 에서
+        이 값이 38.5% 의 절약보다 큰지는 **아직 안 재봤다.** 그래서 기본은 꺼짐이고
+        `--value-cache` 로 A/B 하도록 뒀다.
+        """
+        cache = self.value_cache
+        if cache is None:
+            return evaluate(children, child_mask)
+
+        keys = [row.tobytes() for row in self.index.pack_keys(children).cpu().numpy()]
+        hit_pos, hit_val, miss = [], [], []
+        for i, key in enumerate(keys):
+            value = cache.get(key)
+            if value is None:
+                miss.append(i)
+            else:
+                hit_pos.append(i)
+                hit_val.append(value)
+
+        out = torch.empty(len(keys), dtype=torch.float32, device=children.device)
+        if hit_pos:
+            out[torch.as_tensor(hit_pos, device=out.device)] = torch.as_tensor(
+                hit_val, dtype=torch.float32, device=out.device)
+        if miss:
+            sel = torch.as_tensor(miss, device=children.device)
+            fresh = evaluate(children[sel],
+                             None if child_mask is None else child_mask[sel])
+            out[sel] = fresh.to(out.dtype)
+            if len(cache) > self.value_cache_limit:
+                cache.clear()          # 통째로 비운다 (`_plan_cache` 와 같은 방식)
+            for i, value in zip(miss, fresh.detach().cpu().tolist()):
+                cache[keys[i]] = value
+        return out
+
     # ── 빔 (교사이자 무거운 배포 모드) ───────────────────────────────────
-    def policy_logits_from_grid(self, grids: torch.Tensor) -> torch.Tensor:
-        return self.policy_logits(self.index.observation(grids))
+    def policy_logits_from_grid(self, grids: torch.Tensor,
+                                mask: torch.Tensor | None = None) -> torch.Tensor:
+        """판에서 바로 정책 로짓. `mask` 를 넘기면 합법 판정을 **두 번** 아낀다.
+
+        옛 구현은 `policy_logits(self.index.observation(grids))` 였다. 그러면
+        `observation()` 이 한 번, `policy_logits()` 가 obs 에서 판을 되살려
+        (`grid_from_obs`) 또 한 번, 모두 **두 번** 합법 판정을 했다. 그런데 빔은
+        부모의 마스크를 이미 손에 들고 있다.
+
+        실측(2026-08-18 프로파일): 깊이마다 `legal_mask` 호출이 **3회**였고 그중
+        2회가 이 경로였다. 크기는 부모(W)라 자식(M)보다 작지만 **호출 횟수** 자체가
+        비용이다 — 복구 빔은 자식이 512개뿐이라 계산이 아니라 커널 실행 대기에
+        묶여 있고, 거기가 판당 시간의 60% 다.
+        """
+        obs = self.index.observation(grids, mask)
+        logits = self.policy_net(self._cells(obs), prefix_sum((obs[:, 0] < 0.5).to(obs.dtype)))
+        if mask is None:                       # 판이 있으니 obs 에서 되살릴 필요가 없다
+            mask = self.index.legal_mask_from_grid(grids)
+        return logits.masked_fill(~mask, MASK_FILL)
 
     @torch.no_grad()
-    def _leftover_chunked(self, children: torch.Tensor) -> torch.Tensor:
-        """자식 전부의 예상 잔여. 큰 폭에서 VRAM 봉우리를 자른다 (결과 동일)."""
-        if children.shape[0] <= EVAL_CHUNK:
-            return self.expected_leftover(self.index.observation(children))
-        parts = [self.expected_leftover(self.index.observation(children[s:s + EVAL_CHUNK]))
-                 for s in range(0, children.shape[0], EVAL_CHUNK)]
-        return torch.cat(parts)
+    def _leftover_chunked(self, children: torch.Tensor,
+                          mask: torch.Tensor | None = None) -> torch.Tensor:
+        """자식 전부의 예상 잔여. 큰 폭에서 VRAM 봉우리를 자른다 (결과 동일).
+
+        `mask` 는 이미 계산해 둔 합법 마스크다. 빔은 가지치기·2단 평가 때문에
+        어차피 갖고 있는데, 넘기지 않으면 `observation()` 이 그것을 **한 번 더**
+        잰다 (전체의 34% 짜리 계산이다).
+        """
+        chunk = self.eval_chunk if self.eval_chunk > 0 else children.shape[0]
+        parts = [self.expected_leftover(
+                     self.index.observation(children[s:s + chunk],
+                                            None if mask is None else mask[s:s + chunk]))
+                 for s in range(0, children.shape[0], chunk)]
+        return parts[0] if len(parts) == 1 else torch.cat(parts)
 
     @torch.no_grad()
     def plan(self, grid: torch.Tensor, width: int, topk: int | None = None,
@@ -416,7 +661,8 @@ class TeacherDistilledQNetwork(QNetwork):
 
         `topk > 0` 이면 노드마다 **정책 상위 k개만** 펼친다 (배포용, 비용 k/28).
         `collect` 면 학습 라벨을 함께 모은다.
-        `evaluate` 로 가치 대신 다른 평가기를 넣을 수 있다 (자식 판 -> 예상 잔여).
+        `evaluate(children, mask)` 로 가치 대신 다른 평가기를 넣을 수 있다
+        (자식 판 -> 예상 잔여. `mask` 는 미리 계산된 합법 마스크라 다시 안 재도 된다).
         **AI 트랙의 기여분을 재는 대조군이 이걸 쓴다** — 같은 탐색을 손 평가로
         돌린 것과의 차이가 곧 학습의 몫이다 (빔에서 +6.48).
 
@@ -452,9 +698,15 @@ class TeacherDistilledQNetwork(QNetwork):
         # "이 노드에서 빔이 실제로 낸 최고 점수". 잎에서 채우고 위로 max 로 올린다.
         lv_best = [grids.new_full((1,), -float("inf"))]
         best_score, best_leaf = -1, (0, 0)
+        # 자식의 합법 마스크는 **다음 깊이의 부모 마스크 그대로**다. 물려받으면
+        # 스텝마다 폭(W)개를 다시 재지 않아도 된다 (옛 구현은 매번 다시 쟀다).
+        carry_mask = None
+        # 2단 평가. 학습 때 켜면 정책 목표가 싼 평가의 선택으로 편향되므로 강제로 끈다.
+        prefilter = 0 if collect else self.prefilter_mult * width
 
         for depth in range(self.n_cells):
-            masks = index.legal_mask_from_grid(grids)
+            masks = (index.legal_mask_chunked(grids, self.eval_chunk)
+                     if carry_mask is None else carry_mask)
             alive = masks.any(dim=1)
 
             dead = (~alive).nonzero(as_tuple=True)[0]
@@ -471,7 +723,7 @@ class TeacherDistilledQNetwork(QNetwork):
             kept = alive.nonzero(as_tuple=True)[0]
             g, m = grids[kept], masks[kept]
 
-            logits = (self.policy_logits_from_grid(g)
+            logits = (self.policy_logits_from_grid(g, m)
                       if (topk > 0 or collect) else None)
             if topk > 0:
                 # 로짓은 불법수가 -1e8 이라 topk 가 합법수를 먼저 집는다.
@@ -484,12 +736,21 @@ class TeacherDistilledQNetwork(QNetwork):
             children = index.erase(g[state_idx], action_idx)
 
             # 지운 칸 집합이 같으면 점수도 같다. 폭을 중복에 낭비하지 않는다.
-            _, uniq = np.unique(children.reshape(children.shape[0], -1).cpu().numpy(),
-                                axis=0, return_index=True)
-            sel = torch.as_tensor(uniq, device=children.device)
+            sel = index.dedup_indices(children)
             children, state_idx, action_idx = children[sel], state_idx[sel], action_idx[sel]
 
-            leftover = evaluate(children)
+            child_mask = index.legal_mask_chunked(children, self.eval_chunk)
+            if prefilter and children.shape[0] > prefilter:
+                # 1단 — 규칙만으로 매긴다 (남은 사과 - w x 합법수). 마스크가 이미
+                # 있으니 거의 공짜다. 여기서 걸러진 자식은 가치망을 보지 않는다.
+                cheap = ((children != 0).flatten(1).sum(dim=1).to(torch.float32)
+                         - PREFILTER_W_LEGAL * child_mask.sum(dim=1).to(torch.float32))
+                keep = torch.topk(cheap, prefilter, largest=False).indices
+                children, state_idx, action_idx, child_mask = (
+                    children[keep], state_idx[keep], action_idx[keep], child_mask[keep])
+
+            # 2단 — 가치망. 마스크를 같이 넘겨 `observation()` 의 재계산을 없앤다.
+            leftover = self._evaluate_cached(evaluate, children, child_mask)
 
             if collect:
                 # 부모마다 자식들의 가치를 dense 로 흩뿌린 뒤 상위 k개를 목표 분포로.
@@ -511,6 +772,7 @@ class TeacherDistilledQNetwork(QNetwork):
 
             order = torch.argsort(leftover)[:width]
             grids = children[order].contiguous()
+            carry_mask = child_mask[order].contiguous()
             lv_grids.append(grids)
             lv_parent.append(kept[state_idx[order]])       # 깊이 d 의 **원본** 인덱스
             lv_action.append(action_idx[order])

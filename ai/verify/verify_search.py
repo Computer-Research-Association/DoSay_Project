@@ -54,7 +54,14 @@ def main() -> int:
     parser.add_argument("--budget", type=float, default=20.0)
     parser.add_argument("--init-width", type=int, default=32)
     parser.add_argument("--repair-width", type=int, default=16)
-    parser.add_argument("--device", choices=("auto", "cuda", "cpu"), default="auto")
+    parser.add_argument("--device", choices=("auto", "cuda", "mps", "cpu"),
+                        default="auto")
+    parser.add_argument("--fp16", action="store_true",
+                        help="반정밀도 인코더로 같은 검사를 돌린다")
+    parser.add_argument("--prefilter", type=int, default=0,
+                        help="2단 평가를 켜고 같은 검사를 돌린다")
+    parser.add_argument("--value-cache", action="store_true",
+                        help="값 캐시를 켜고 같은 검사를 돌린다")
     args = parser.parse_args()
 
     device = resolve_device(args.device)
@@ -63,12 +70,24 @@ def main() -> int:
     net = model.policy.q_net
     assert hasattr(net, "plan"), "V15 계열 체크포인트가 필요하다 (plan() 없음)"
 
+    # 속도 손잡이를 켠 채로도 수순이 엔진에서 성립하는지 본다. 손잡이를 켜고
+    # 100판을 돌리기 전에 **반드시** 같은 손잡이로 이 검사를 통과시킬 것.
+    if args.fp16:
+        net.autocast_dtype = torch.float16
+    net.prefilter_mult = args.prefilter
+
     print(f"체크포인트 {source.name}   장치 {device}")
     print(f"{args.episodes}판, 판당 {args.budget:.0f}초, "
           f"첫 빔 W={args.init_width} / 복구 W={args.repair_width}\n")
 
+    print(f"속도 손잡이: fp16 {'O' if args.fp16 else 'X'}, "
+          f"2단평가 {args.prefilter if args.prefilter else 'X'}, "
+          f"값캐시 {'O' if args.value_cache else 'X'}")
+    print()
+
     base = dict(budget_sec=args.budget, init_width=args.init_width,
-                init_topk=8, repair_width=args.repair_width, repair_topk=8)
+                init_topk=8, repair_width=args.repair_width, repair_topk=8,
+                value_cache=args.value_cache)
     nb = dict(budget_sec=args.budget, init_width=args.init_width, init_topk=8,
               iterations=6, rollout_batch=16)
     runs = [

@@ -132,6 +132,12 @@ class Config:
     # 가치 대신 쓸 평가기. None 이면 신경망. 대조군은 `hand_eval(index)` 를 넣는다.
     evaluate: object | None = None
 
+    # 같은 판을 두 번 평가하지 않는다. **결과가 완전히 같다** (신경망은 결정론적).
+    # 실측으로 평가의 38.5% 가 이미 본 판이었고 그 중복은 전부 복구 단계에서
+    # 나온다. 다만 스텝마다 키를 CPU 로 내려야 해서 GPU 에서 남는 장사인지는
+    # 아직 안 쟀다. 그래서 기본은 꺼짐이다.
+    value_cache: bool = False
+
     seed: int = 0
 
     def __post_init__(self) -> None:
@@ -182,9 +188,12 @@ def hand_eval(index, w_legal: float = 2.5):
     `plan()` 은 이 값이 **작은** 자식을 고르므로 부호를 그렇게 맞춘다.
     """
 
-    def evaluate(children: torch.Tensor) -> torch.Tensor:
+    def evaluate(children: torch.Tensor,
+                 mask: torch.Tensor | None = None) -> torch.Tensor:
         occupied = (children != 0).flatten(1).sum(dim=1).to(torch.float32)
-        legal = index.legal_mask_from_grid(children).sum(dim=1).to(torch.float32)
+        if mask is None:                  # 빔 바깥에서 부르면 직접 잰다
+            mask = index.legal_mask_from_grid(children)
+        legal = mask.sum(dim=1).to(torch.float32)
         return occupied - w_legal * legal
 
     return evaluate
@@ -239,6 +248,8 @@ def solve(net, grid: torch.Tensor, cfg: Config | None = None) -> Result:
     rng = np.random.default_rng(cfg.seed)
     index = net.index
     start = time.time()
+    # 캐시는 **판 하나 동안만** 산다. 키가 점유 비트라 뿌리가 바뀌면 뜻이 달라진다.
+    net.value_cache = {} if cfg.value_cache else None
     occupied0 = int((grid != 0).sum().item())
 
     # ── 1. 첫 해답 (빔) ──────────────────────────────────────────────────

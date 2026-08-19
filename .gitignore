@@ -9,6 +9,7 @@ ai/logs/
 results/
 docs/
 *.txt
+*.pptx
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
