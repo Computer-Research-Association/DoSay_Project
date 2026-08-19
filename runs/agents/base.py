@@ -1,11 +1,10 @@
-from agents.utils import format_box
+from agents.utils import format_dataclass_box
 
 import numpy as np
 from numpy.typing import NDArray
 from pathlib import Path
 from typing import Tuple, Any
 from abc import ABC, abstractmethod
-from dataclasses import fields
 
 class Agent(ABC):
     def __init__(self, grid_shape: Tuple[int, int], model_path: Path) -> None:
@@ -30,21 +29,4 @@ class Agent(ABC):
         pass
 
     def get_info_formatted(self) -> str:
-        info = self.get_info()
-        rows = [
-            (f.metadata.get("label", f.name), _format_value(val)) 
-            for f in fields(info) 
-            if (val := getattr(info, f.name)) is not None
-        ]
-
-        label_width = max(len(label) for label, _ in rows)
-        lines = [f"{label:<{label_width}} : {value}" for label, value in rows]
-
-        return format_box("Agent Info", lines)
-
-def _format_value(value) -> str:
-    if isinstance(value, bool):
-        return str(value)
-    if isinstance(value, int):
-        return f"{value:,}"
-    return str(value)
+        return format_dataclass_box("Agent Info", self.get_info())
