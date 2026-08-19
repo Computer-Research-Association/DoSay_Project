@@ -229,3 +229,15 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+dl/
+testcases/
+results/
+bench/big*_cy/
+bench/build/
+bench/*.so
+__pycache__/
+*.egg-info/
+*.pyc
+ai_moves_80000.json
+solution_moves.json
