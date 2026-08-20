@@ -19,6 +19,22 @@ class AIInfo:
 
 
 @dataclass
+class SearchInfo:
+    """추론 시점 탐색(국소탐색/NRPA)으로 두는 에이전트의 정보."""
+    model_type: str           = field(metadata={"label": "Model Type"})
+    model_name: str           = field(metadata={"label": "Engine"})
+    agent_version: str        = field(metadata={"label": "Version"})
+    source_path: Path         = field(metadata={"label": "File"})
+    engine: str               = field(metadata={"label": "Search"})
+    preset: str               = field(metadata={"label": "Preset"})
+    preset_label: str         = field(metadata={"label": "Preset detail"})
+    budget_sec: float         = field(metadata={"label": "Budget (s/board)"})
+    device: str               = field(metadata={"label": "Device"})
+    knobs: str                = field(metadata={"label": "Speed knobs"})
+    total_train_steps: int    = field(metadata={"label": "Train steps"})
+
+
+@dataclass
 class TrainInfo:
     agent_version: str        = field(metadata={"label": "Version"})
     total_timestep: int       = field(metadata={"label": "Total Timestep"})
@@ -61,3 +77,8 @@ class AlgoInfo:
     source_path: Path         = field(metadata={"label": "File"})
     beam_width: Optional[int] = field(metadata={"label": "Beam Width"}, default=None)
     max_depth: Optional[int]  = field(metadata={"label": "Beam Depth"}, default=None)
+    # 어닐링용. 어떤 설정과 어떤 구현으로 낸 점수인지 결과 JSON 에 남아야
+    # 나중에 숫자끼리 비교할 수 있다.
+    iterations: Optional[int] = field(metadata={"label": "Iterations"}, default=None)
+    instances: Optional[int]  = field(metadata={"label": "Instances"}, default=None)
+    backend: Optional[str]    = field(metadata={"label": "Backend"}, default=None)

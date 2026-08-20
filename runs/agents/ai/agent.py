@@ -9,6 +9,9 @@ import time
 from pathlib import Path
 from typing import Tuple
 
+from game.action import Action
+from game.board import Board
+
 
 class AIAgent(Agent):
     def __init__(self, grid_shape: Tuple[int, int], model_path: Path,
@@ -27,6 +30,21 @@ class AIAgent(Agent):
 
     def get_info(self) -> AIInfo:
         return self.model_info
+
+    def select_action(self, board: Board) -> Action | None:
+        """판 하나를 받아 둘 수를 고른다. env 는 관측 인코딩을 빌리는 용도로만 쓴다."""
+        if not board.get_valid_actions():
+            return None
+
+        env = self.env.unwrapped
+        if self.search is not None:
+            # choose() 가 끝나면서 env.board 를 원래대로 되돌려 놓는다.
+            index = self.search.choose(board)
+        else:
+            env.board = board   # type: ignore[attr-defined]
+            index = self._policy_action(env._get_obs(), env.get_action_mask())  # type: ignore[attr-defined]
+
+        return env.index_to_action[index]   # type: ignore[attr-defined]
 
     def _policy_action(self, obs, action_masks) -> int:
         if self.model_info.use_action_masking:

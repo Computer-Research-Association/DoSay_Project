@@ -42,11 +42,28 @@ def _select_ai(root: Path) -> Path:
 
 
 def _select_algorithm(root: Path) -> Path:
+    """종류 -> 버전 순으로 좁혀 모델 파일 하나를 고른다.
+
+    AI 쪽과 같은 모양으로 두 단계다. 버전 파일이 60개를 넘어서 한 목록에 늘어놓으면
+    화면을 넘겨 가며 골라야 한다. 종류는 파일명 앞부분(Greedy/Beam/Anneal)이다.
+    """
     candidates = sorted(root.glob(ALGO_VERSION_GLOB))
     if not candidates:
         raise RuntimeError(f"{root / ALGO_VERSION_GLOB} 에 사용 가능한 알고리즘이 없습니다.")
 
-    return candidates[select_from("Select ALGORITHM Agent", [p.stem for p in candidates])]
+    by_type: dict[str, list[Path]] = {}
+    for path in candidates:
+        by_type.setdefault(path.stem.split("_")[0], []).append(path)
+
+    types = sorted(by_type)
+    chosen = types[0] if len(types) == 1 else types[
+        select_from("Select ALGORITHM Type",
+                    [f"{name}  ({len(by_type[name])}개)" for name in types])]
+
+    versions = by_type[chosen]
+    if len(versions) == 1:
+        return versions[0]  # 고를 것이 없으면 묻지 않는다
+    return versions[select_from(f"Select Version ({chosen})", [p.stem for p in versions])]
 
 
 AGENT_REGISTRY: dict[str, tuple[Type[Agent], Callable[[Path], Path]]] = {
