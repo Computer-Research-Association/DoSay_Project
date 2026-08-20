@@ -6,7 +6,7 @@ from agents.dtos import AlgoInfo
 from pathlib import Path
 from typing import Tuple
 
-from algorithm.models.model_executor import AlgoExecutor, GreedyExecutor
+from algorithm.models.model_executor import AlgoExecutor, GreedyExecutor, AnnealExecutor
 
 class AlgoAgent(Agent):
     def __new__(cls, grid_shape: Tuple[int, int], model_path: Path, **kwargs):
@@ -43,6 +43,28 @@ class HeuristicAgent(AlgoAgent):
         return steps, score
 
 
+class AnnealAgent(AlgoAgent):
+    def __init__(self, grid_shape: Tuple[int, int], model_path: Path) -> None:
+        super().__init__(grid_shape, model_path)
+        self.executor = AnnealExecutor(grid_shape, model_path)
+
+    def get_info(self) -> AlgoInfo:
+        return self.executor.model_info
+
+    def run_episode(self, board_source, render, delay):
+        board, score = self.executor.reset(board_source)
+        steps = 0
+        while not board.is_done()[0]:
+            cleared = self.executor.do_step()
+            steps += 1
+            score += cleared
+            if render:
+                print(f"\n[step {steps:>3}] score={score}")
+                if delay > 0: time.sleep(delay)
+        return steps, score
+
+
 AGENT_REGISTRY = {
-    "Greedy": HeuristicAgent
+    "Greedy": HeuristicAgent,
+    "Anneal": AnnealAgent,
 }

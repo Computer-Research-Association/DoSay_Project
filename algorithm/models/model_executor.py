@@ -72,3 +72,48 @@ class BeamSearchExecutor(AlgoExecutor):
     
     def do_game(self):
         pass
+
+class AnnealExecutor(AlgoExecutor):
+    """어닐링(best 모델): reset 시 전체 수순을 계산해두고, do_step으로 한 수씩 재생."""
+    def __init__(self, grid_shape: Tuple[int, int], model_path: Path):
+        super().__init__(grid_shape, model_path)
+        self.iters = int(getattr(self.cls, "ITERS", 8000))
+        self.instances = int(getattr(self.cls, "INSTANCES", 16))
+        self._plan: list = []
+        self._ptr = 0
+
+    def _solve(self, grid: NDArray[np.int8]) -> list:
+        from game.action import Action
+        best_sc, best_seq = -1, []
+        try:  # 빠른 경로: 전체-Cython (9x18)
+            import sys as _s
+            _s.path.insert(0, str(self.model_path.resolve().parents[3] / "bench"))
+            from anneal_cy import anneal_cy  # type: ignore
+            b = np.ascontiguousarray(grid, dtype=np.int8)
+            for j in range(self.instances):
+                sc, seq = anneal_cy(b, self.iters, j * 100 + 1)
+                if sc > best_sc:
+                    best_sc, best_seq = sc, seq
+        except Exception:  # 폴백: numba anneal_once
+            from models.anneal import anneal_once
+            for j in range(self.instances):
+                sc, seq = anneal_once(np.asarray(grid), iters=self.iters, rng_seed=j)
+                if sc > best_sc:
+                    best_sc, best_seq = sc, seq
+        return [Action(top_left=(m[0], m[1]), bottom_right=(m[2], m[3])) for m in best_seq]
+
+    def reset(self, board_source):
+        board, score = super().reset(board_source)
+        self._plan = self._solve(self.board.grid)
+        self._ptr = 0
+        return board, score
+
+    def do_step(self) -> int:
+        if self.board is None:
+            raise RuntimeError("Executor reset needed: call reset() before do_step().")
+        if self._ptr >= len(self._plan):
+            return 0
+        action = self._plan[self._ptr]
+        self._ptr += 1
+        _, cleared = self.board.do_action(action)
+        return cleared
