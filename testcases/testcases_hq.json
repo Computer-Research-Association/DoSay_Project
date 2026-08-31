@@ -1,0 +1,3502 @@
+[
+ {
+  "seed": 100000,
+  "sum": 809,
+  "value_bound": 161,
+  "best_score": 141,
+  "n_runs": 20
+ },
+ {
+  "seed": 100001,
+  "sum": 827,
+  "value_bound": 161,
+  "best_score": 133,
+  "n_runs": 20
+ },
+ {
+  "seed": 100002,
+  "sum": 803,
+  "value_bound": 161,
+  "best_score": 142,
+  "n_runs": 20
+ },
+ {
+  "seed": 100003,
+  "sum": 820,
+  "value_bound": 162,
+  "best_score": 144,
+  "n_runs": 20
+ },
+ {
+  "seed": 100004,
+  "sum": 856,
+  "value_bound": 161,
+  "best_score": 114,
+  "n_runs": 20
+ },
+ {
+  "seed": 100005,
+  "sum": 839,
+  "value_bound": 161,
+  "best_score": 131,
+  "n_runs": 20
+ },
+ {
+  "seed": 100006,
+  "sum": 791,
+  "value_bound": 161,
+  "best_score": 151,
+  "n_runs": 20
+ },
+ {
+  "seed": 100007,
+  "sum": 802,
+  "value_bound": 161,
+  "best_score": 142,
+  "n_runs": 20
+ },
+ {
+  "seed": 100008,
+  "sum": 804,
+  "value_bound": 161,
+  "best_score": 143,
+  "n_runs": 20
+ },
+ {
+  "seed": 100009,
+  "sum": 800,
+  "value_bound": 162,
+  "best_score": 135,
+  "n_runs": 20
+ },
+ {
+  "seed": 100010,
+  "sum": 791,
+  "value_bound": 161,
+  "best_score": 150,
+  "n_runs": 20
+ },
+ {
+  "seed": 100011,
+  "sum": 853,
+  "value_bound": 161,
+  "best_score": 117,
+  "n_runs": 20
+ },
+ {
+  "seed": 100012,
+  "sum": 793,
+  "value_bound": 161,
+  "best_score": 145,
+  "n_runs": 20
+ },
+ {
+  "seed": 100013,
+  "sum": 782,
+  "value_bound": 161,
+  "best_score": 140,
+  "n_runs": 20
+ },
+ {
+  "seed": 100014,
+  "sum": 822,
+  "value_bound": 161,
+  "best_score": 134,
+  "n_runs": 20
+ },
+ {
+  "seed": 100015,
+  "sum": 813,
+  "value_bound": 161,
+  "best_score": 140,
+  "n_runs": 20
+ },
+ {
+  "seed": 100016,
+  "sum": 785,
+  "value_bound": 161,
+  "best_score": 140,
+  "n_runs": 20
+ },
+ {
+  "seed": 100017,
+  "sum": 814,
+  "value_bound": 161,
+  "best_score": 130,
+  "n_runs": 20
+ },
+ {
+  "seed": 100018,
+  "sum": 796,
+  "value_bound": 161,
+  "best_score": 144,
+  "n_runs": 20
+ },
+ {
+  "seed": 100019,
+  "sum": 834,
+  "value_bound": 161,
+  "best_score": 126,
+  "n_runs": 20
+ },
+ {
+  "seed": 100020,
+  "sum": 844,
+  "value_bound": 161,
+  "best_score": 120,
+  "n_runs": 20
+ },
+ {
+  "seed": 100021,
+  "sum": 817,
+  "value_bound": 161,
+  "best_score": 124,
+  "n_runs": 20
+ },
+ {
+  "seed": 100022,
+  "sum": 838,
+  "value_bound": 161,
+  "best_score": 112,
+  "n_runs": 20
+ },
+ {
+  "seed": 100023,
+  "sum": 810,
+  "value_bound": 162,
+  "best_score": 148,
+  "n_runs": 20
+ },
+ {
+  "seed": 100024,
+  "sum": 823,
+  "value_bound": 161,
+  "best_score": 127,
+  "n_runs": 20
+ },
+ {
+  "seed": 100025,
+  "sum": 831,
+  "value_bound": 161,
+  "best_score": 118,
+  "n_runs": 20
+ },
+ {
+  "seed": 100026,
+  "sum": 808,
+  "value_bound": 161,
+  "best_score": 142,
+  "n_runs": 20
+ },
+ {
+  "seed": 100027,
+  "sum": 812,
+  "value_bound": 161,
+  "best_score": 141,
+  "n_runs": 20
+ },
+ {
+  "seed": 100028,
+  "sum": 780,
+  "value_bound": 162,
+  "best_score": 148,
+  "n_runs": 20
+ },
+ {
+  "seed": 100029,
+  "sum": 798,
+  "value_bound": 161,
+  "best_score": 135,
+  "n_runs": 20
+ },
+ {
+  "seed": 100030,
+  "sum": 776,
+  "value_bound": 161,
+  "best_score": 151,
+  "n_runs": 20
+ },
+ {
+  "seed": 100031,
+  "sum": 849,
+  "value_bound": 161,
+  "best_score": 95,
+  "n_runs": 20
+ },
+ {
+  "seed": 100032,
+  "sum": 784,
+  "value_bound": 161,
+  "best_score": 146,
+  "n_runs": 20
+ },
+ {
+  "seed": 100033,
+  "sum": 809,
+  "value_bound": 161,
+  "best_score": 139,
+  "n_runs": 20
+ },
+ {
+  "seed": 100034,
+  "sum": 810,
+  "value_bound": 162,
+  "best_score": 115,
+  "n_runs": 20
+ },
+ {
+  "seed": 100035,
+  "sum": 816,
+  "value_bound": 161,
+  "best_score": 135,
+  "n_runs": 20
+ },
+ {
+  "seed": 100036,
+  "sum": 795,
+  "value_bound": 161,
+  "best_score": 141,
+  "n_runs": 20
+ },
+ {
+  "seed": 100037,
+  "sum": 810,
+  "value_bound": 162,
+  "best_score": 131,
+  "n_runs": 20
+ },
+ {
+  "seed": 100038,
+  "sum": 843,
+  "value_bound": 161,
+  "best_score": 125,
+  "n_runs": 20
+ },
+ {
+  "seed": 100039,
+  "sum": 811,
+  "value_bound": 161,
+  "best_score": 138,
+  "n_runs": 20
+ },
+ {
+  "seed": 100040,
+  "sum": 784,
+  "value_bound": 161,
+  "best_score": 148,
+  "n_runs": 20
+ },
+ {
+  "seed": 100041,
+  "sum": 816,
+  "value_bound": 161,
+  "best_score": 131,
+  "n_runs": 20
+ },
+ {
+  "seed": 100042,
+  "sum": 842,
+  "value_bound": 161,
+  "best_score": 104,
+  "n_runs": 20
+ },
+ {
+  "seed": 100043,
+  "sum": 819,
+  "value_bound": 161,
+  "best_score": 126,
+  "n_runs": 20
+ },
+ {
+  "seed": 100044,
+  "sum": 825,
+  "value_bound": 161,
+  "best_score": 129,
+  "n_runs": 20
+ },
+ {
+  "seed": 100045,
+  "sum": 752,
+  "value_bound": 161,
+  "best_score": 160,
+  "n_runs": 20
+ },
+ {
+  "seed": 100046,
+  "sum": 804,
+  "value_bound": 161,
+  "best_score": 136,
+  "n_runs": 20
+ },
+ {
+  "seed": 100047,
+  "sum": 770,
+  "value_bound": 162,
+  "best_score": 147,
+  "n_runs": 20
+ },
+ {
+  "seed": 100048,
+  "sum": 767,
+  "value_bound": 161,
+  "best_score": 157,
+  "n_runs": 20
+ },
+ {
+  "seed": 100049,
+  "sum": 846,
+  "value_bound": 161,
+  "best_score": 111,
+  "n_runs": 20
+ },
+ {
+  "seed": 100050,
+  "sum": 797,
+  "value_bound": 161,
+  "best_score": 139,
+  "n_runs": 20
+ },
+ {
+  "seed": 100051,
+  "sum": 833,
+  "value_bound": 161,
+  "best_score": 120,
+  "n_runs": 20
+ },
+ {
+  "seed": 100052,
+  "sum": 828,
+  "value_bound": 161,
+  "best_score": 117,
+  "n_runs": 20
+ },
+ {
+  "seed": 100053,
+  "sum": 779,
+  "value_bound": 161,
+  "best_score": 154,
+  "n_runs": 20
+ },
+ {
+  "seed": 100054,
+  "sum": 868,
+  "value_bound": 161,
+  "best_score": 111,
+  "n_runs": 20
+ },
+ {
+  "seed": 100055,
+  "sum": 787,
+  "value_bound": 161,
+  "best_score": 143,
+  "n_runs": 20
+ },
+ {
+  "seed": 100056,
+  "sum": 782,
+  "value_bound": 161,
+  "best_score": 134,
+  "n_runs": 20
+ },
+ {
+  "seed": 100057,
+  "sum": 810,
+  "value_bound": 162,
+  "best_score": 130,
+  "n_runs": 20
+ },
+ {
+  "seed": 100058,
+  "sum": 810,
+  "value_bound": 162,
+  "best_score": 133,
+  "n_runs": 20
+ },
+ {
+  "seed": 100059,
+  "sum": 809,
+  "value_bound": 161,
+  "best_score": 145,
+  "n_runs": 20
+ },
+ {
+  "seed": 100060,
+  "sum": 890,
+  "value_bound": 162,
+  "best_score": 97,
+  "n_runs": 20
+ },
+ {
+  "seed": 100061,
+  "sum": 824,
+  "value_bound": 161,
+  "best_score": 136,
+  "n_runs": 20
+ },
+ {
+  "seed": 100062,
+  "sum": 773,
+  "value_bound": 161,
+  "best_score": 147,
+  "n_runs": 20
+ },
+ {
+  "seed": 100063,
+  "sum": 771,
+  "value_bound": 161,
+  "best_score": 152,
+  "n_runs": 20
+ },
+ {
+  "seed": 100064,
+  "sum": 779,
+  "value_bound": 161,
+  "best_score": 148,
+  "n_runs": 20
+ },
+ {
+  "seed": 100065,
+  "sum": 829,
+  "value_bound": 161,
+  "best_score": 132,
+  "n_runs": 20
+ },
+ {
+  "seed": 100066,
+  "sum": 741,
+  "value_bound": 161,
+  "best_score": 157,
+  "n_runs": 20
+ },
+ {
+  "seed": 100067,
+  "sum": 765,
+  "value_bound": 161,
+  "best_score": 149,
+  "n_runs": 20
+ },
+ {
+  "seed": 100068,
+  "sum": 767,
+  "value_bound": 161,
+  "best_score": 157,
+  "n_runs": 20
+ },
+ {
+  "seed": 100069,
+  "sum": 788,
+  "value_bound": 161,
+  "best_score": 126,
+  "n_runs": 20
+ },
+ {
+  "seed": 100070,
+  "sum": 892,
+  "value_bound": 161,
+  "best_score": 90,
+  "n_runs": 20
+ },
+ {
+  "seed": 100071,
+  "sum": 794,
+  "value_bound": 161,
+  "best_score": 141,
+  "n_runs": 20
+ },
+ {
+  "seed": 100072,
+  "sum": 819,
+  "value_bound": 161,
+  "best_score": 137,
+  "n_runs": 20
+ },
+ {
+  "seed": 100073,
+  "sum": 775,
+  "value_bound": 161,
+  "best_score": 151,
+  "n_runs": 20
+ },
+ {
+  "seed": 100074,
+  "sum": 801,
+  "value_bound": 161,
+  "best_score": 141,
+  "n_runs": 20
+ },
+ {
+  "seed": 100075,
+  "sum": 809,
+  "value_bound": 161,
+  "best_score": 138,
+  "n_runs": 20
+ },
+ {
+  "seed": 100076,
+  "sum": 831,
+  "value_bound": 161,
+  "best_score": 117,
+  "n_runs": 20
+ },
+ {
+  "seed": 100077,
+  "sum": 888,
+  "value_bound": 161,
+  "best_score": 96,
+  "n_runs": 20
+ },
+ {
+  "seed": 100078,
+  "sum": 778,
+  "value_bound": 161,
+  "best_score": 154,
+  "n_runs": 20
+ },
+ {
+  "seed": 100079,
+  "sum": 853,
+  "value_bound": 161,
+  "best_score": 109,
+  "n_runs": 20
+ },
+ {
+  "seed": 100080,
+  "sum": 779,
+  "value_bound": 161,
+  "best_score": 140,
+  "n_runs": 20
+ },
+ {
+  "seed": 100081,
+  "sum": 819,
+  "value_bound": 161,
+  "best_score": 139,
+  "n_runs": 20
+ },
+ {
+  "seed": 100082,
+  "sum": 802,
+  "value_bound": 161,
+  "best_score": 122,
+  "n_runs": 20
+ },
+ {
+  "seed": 100083,
+  "sum": 804,
+  "value_bound": 161,
+  "best_score": 138,
+  "n_runs": 20
+ },
+ {
+  "seed": 100084,
+  "sum": 783,
+  "value_bound": 161,
+  "best_score": 152,
+  "n_runs": 20
+ },
+ {
+  "seed": 100085,
+  "sum": 834,
+  "value_bound": 161,
+  "best_score": 121,
+  "n_runs": 20
+ },
+ {
+  "seed": 100086,
+  "sum": 813,
+  "value_bound": 161,
+  "best_score": 136,
+  "n_runs": 20
+ },
+ {
+  "seed": 100087,
+  "sum": 893,
+  "value_bound": 161,
+  "best_score": 99,
+  "n_runs": 20
+ },
+ {
+  "seed": 100088,
+  "sum": 773,
+  "value_bound": 161,
+  "best_score": 143,
+  "n_runs": 20
+ },
+ {
+  "seed": 100089,
+  "sum": 822,
+  "value_bound": 161,
+  "best_score": 130,
+  "n_runs": 20
+ },
+ {
+  "seed": 100090,
+  "sum": 854,
+  "value_bound": 161,
+  "best_score": 123,
+  "n_runs": 20
+ },
+ {
+  "seed": 100091,
+  "sum": 819,
+  "value_bound": 161,
+  "best_score": 127,
+  "n_runs": 20
+ },
+ {
+  "seed": 100092,
+  "sum": 817,
+  "value_bound": 161,
+  "best_score": 123,
+  "n_runs": 20
+ },
+ {
+  "seed": 100093,
+  "sum": 759,
+  "value_bound": 161,
+  "best_score": 155,
+  "n_runs": 20
+ },
+ {
+  "seed": 100094,
+  "sum": 781,
+  "value_bound": 161,
+  "best_score": 137,
+  "n_runs": 20
+ },
+ {
+  "seed": 100095,
+  "sum": 771,
+  "value_bound": 161,
+  "best_score": 149,
+  "n_runs": 20
+ },
+ {
+  "seed": 100096,
+  "sum": 748,
+  "value_bound": 161,
+  "best_score": 158,
+  "n_runs": 20
+ },
+ {
+  "seed": 100097,
+  "sum": 801,
+  "value_bound": 161,
+  "best_score": 146,
+  "n_runs": 20
+ },
+ {
+  "seed": 100098,
+  "sum": 885,
+  "value_bound": 161,
+  "best_score": 105,
+  "n_runs": 20
+ },
+ {
+  "seed": 100099,
+  "sum": 882,
+  "value_bound": 161,
+  "best_score": 94,
+  "n_runs": 20
+ },
+ {
+  "seed": 100100,
+  "sum": 742,
+  "value_bound": 161,
+  "best_score": 160,
+  "n_runs": 20
+ },
+ {
+  "seed": 100101,
+  "sum": 860,
+  "value_bound": 162,
+  "best_score": 97,
+  "n_runs": 20
+ },
+ {
+  "seed": 100102,
+  "sum": 812,
+  "value_bound": 161,
+  "best_score": 142,
+  "n_runs": 20
+ },
+ {
+  "seed": 100103,
+  "sum": 840,
+  "value_bound": 162,
+  "best_score": 128,
+  "n_runs": 20
+ },
+ {
+  "seed": 100104,
+  "sum": 765,
+  "value_bound": 161,
+  "best_score": 151,
+  "n_runs": 20
+ },
+ {
+  "seed": 100105,
+  "sum": 820,
+  "value_bound": 162,
+  "best_score": 118,
+  "n_runs": 20
+ },
+ {
+  "seed": 100106,
+  "sum": 777,
+  "value_bound": 161,
+  "best_score": 139,
+  "n_runs": 20
+ },
+ {
+  "seed": 100107,
+  "sum": 811,
+  "value_bound": 161,
+  "best_score": 140,
+  "n_runs": 20
+ },
+ {
+  "seed": 100108,
+  "sum": 821,
+  "value_bound": 161,
+  "best_score": 120,
+  "n_runs": 20
+ },
+ {
+  "seed": 100109,
+  "sum": 897,
+  "value_bound": 161,
+  "best_score": 80,
+  "n_runs": 20
+ },
+ {
+  "seed": 100110,
+  "sum": 836,
+  "value_bound": 161,
+  "best_score": 128,
+  "n_runs": 20
+ },
+ {
+  "seed": 100111,
+  "sum": 834,
+  "value_bound": 161,
+  "best_score": 132,
+  "n_runs": 20
+ },
+ {
+  "seed": 100112,
+  "sum": 783,
+  "value_bound": 161,
+  "best_score": 131,
+  "n_runs": 20
+ },
+ {
+  "seed": 100113,
+  "sum": 769,
+  "value_bound": 161,
+  "best_score": 151,
+  "n_runs": 20
+ },
+ {
+  "seed": 100114,
+  "sum": 803,
+  "value_bound": 161,
+  "best_score": 141,
+  "n_runs": 20
+ },
+ {
+  "seed": 100115,
+  "sum": 858,
+  "value_bound": 161,
+  "best_score": 120,
+  "n_runs": 20
+ },
+ {
+  "seed": 100116,
+  "sum": 814,
+  "value_bound": 161,
+  "best_score": 117,
+  "n_runs": 20
+ },
+ {
+  "seed": 100117,
+  "sum": 806,
+  "value_bound": 161,
+  "best_score": 139,
+  "n_runs": 20
+ },
+ {
+  "seed": 100118,
+  "sum": 803,
+  "value_bound": 161,
+  "best_score": 138,
+  "n_runs": 20
+ },
+ {
+  "seed": 100119,
+  "sum": 856,
+  "value_bound": 161,
+  "best_score": 121,
+  "n_runs": 20
+ },
+ {
+  "seed": 100120,
+  "sum": 818,
+  "value_bound": 161,
+  "best_score": 132,
+  "n_runs": 20
+ },
+ {
+  "seed": 100121,
+  "sum": 760,
+  "value_bound": 162,
+  "best_score": 151,
+  "n_runs": 20
+ },
+ {
+  "seed": 100122,
+  "sum": 841,
+  "value_bound": 161,
+  "best_score": 122,
+  "n_runs": 20
+ },
+ {
+  "seed": 100123,
+  "sum": 774,
+  "value_bound": 161,
+  "best_score": 159,
+  "n_runs": 20
+ },
+ {
+  "seed": 100124,
+  "sum": 776,
+  "value_bound": 161,
+  "best_score": 153,
+  "n_runs": 20
+ },
+ {
+  "seed": 100125,
+  "sum": 817,
+  "value_bound": 161,
+  "best_score": 140,
+  "n_runs": 20
+ },
+ {
+  "seed": 100126,
+  "sum": 832,
+  "value_bound": 161,
+  "best_score": 127,
+  "n_runs": 20
+ },
+ {
+  "seed": 100127,
+  "sum": 861,
+  "value_bound": 161,
+  "best_score": 111,
+  "n_runs": 20
+ },
+ {
+  "seed": 100128,
+  "sum": 775,
+  "value_bound": 161,
+  "best_score": 154,
+  "n_runs": 20
+ },
+ {
+  "seed": 100129,
+  "sum": 755,
+  "value_bound": 161,
+  "best_score": 157,
+  "n_runs": 20
+ },
+ {
+  "seed": 100130,
+  "sum": 787,
+  "value_bound": 161,
+  "best_score": 140,
+  "n_runs": 20
+ },
+ {
+  "seed": 100131,
+  "sum": 769,
+  "value_bound": 161,
+  "best_score": 157,
+  "n_runs": 20
+ },
+ {
+  "seed": 100132,
+  "sum": 852,
+  "value_bound": 161,
+  "best_score": 112,
+  "n_runs": 20
+ },
+ {
+  "seed": 100133,
+  "sum": 813,
+  "value_bound": 161,
+  "best_score": 138,
+  "n_runs": 20
+ },
+ {
+  "seed": 100134,
+  "sum": 800,
+  "value_bound": 162,
+  "best_score": 145,
+  "n_runs": 20
+ },
+ {
+  "seed": 100135,
+  "sum": 800,
+  "value_bound": 162,
+  "best_score": 144,
+  "n_runs": 20
+ },
+ {
+  "seed": 100136,
+  "sum": 793,
+  "value_bound": 161,
+  "best_score": 141,
+  "n_runs": 20
+ },
+ {
+  "seed": 100137,
+  "sum": 816,
+  "value_bound": 161,
+  "best_score": 122,
+  "n_runs": 20
+ },
+ {
+  "seed": 100138,
+  "sum": 838,
+  "value_bound": 161,
+  "best_score": 114,
+  "n_runs": 20
+ },
+ {
+  "seed": 100139,
+  "sum": 812,
+  "value_bound": 161,
+  "best_score": 142,
+  "n_runs": 20
+ },
+ {
+  "seed": 100140,
+  "sum": 852,
+  "value_bound": 161,
+  "best_score": 117,
+  "n_runs": 20
+ },
+ {
+  "seed": 100141,
+  "sum": 812,
+  "value_bound": 161,
+  "best_score": 142,
+  "n_runs": 20
+ },
+ {
+  "seed": 100142,
+  "sum": 829,
+  "value_bound": 161,
+  "best_score": 139,
+  "n_runs": 20
+ },
+ {
+  "seed": 100143,
+  "sum": 833,
+  "value_bound": 161,
+  "best_score": 123,
+  "n_runs": 20
+ },
+ {
+  "seed": 100144,
+  "sum": 791,
+  "value_bound": 161,
+  "best_score": 147,
+  "n_runs": 20
+ },
+ {
+  "seed": 100145,
+  "sum": 811,
+  "value_bound": 161,
+  "best_score": 139,
+  "n_runs": 20
+ },
+ {
+  "seed": 100146,
+  "sum": 800,
+  "value_bound": 162,
+  "best_score": 139,
+  "n_runs": 20
+ },
+ {
+  "seed": 100147,
+  "sum": 800,
+  "value_bound": 162,
+  "best_score": 150,
+  "n_runs": 20
+ },
+ {
+  "seed": 100148,
+  "sum": 831,
+  "value_bound": 161,
+  "best_score": 114,
+  "n_runs": 20
+ },
+ {
+  "seed": 100149,
+  "sum": 852,
+  "value_bound": 161,
+  "best_score": 118,
+  "n_runs": 20
+ },
+ {
+  "seed": 100150,
+  "sum": 747,
+  "value_bound": 161,
+  "best_score": 157,
+  "n_runs": 20
+ },
+ {
+  "seed": 100151,
+  "sum": 762,
+  "value_bound": 161,
+  "best_score": 154,
+  "n_runs": 20
+ },
+ {
+  "seed": 100152,
+  "sum": 765,
+  "value_bound": 161,
+  "best_score": 150,
+  "n_runs": 20
+ },
+ {
+  "seed": 100153,
+  "sum": 860,
+  "value_bound": 162,
+  "best_score": 104,
+  "n_runs": 20
+ },
+ {
+  "seed": 100154,
+  "sum": 749,
+  "value_bound": 161,
+  "best_score": 154,
+  "n_runs": 20
+ },
+ {
+  "seed": 100155,
+  "sum": 772,
+  "value_bound": 161,
+  "best_score": 150,
+  "n_runs": 20
+ },
+ {
+  "seed": 100156,
+  "sum": 783,
+  "value_bound": 161,
+  "best_score": 145,
+  "n_runs": 20
+ },
+ {
+  "seed": 100157,
+  "sum": 785,
+  "value_bound": 161,
+  "best_score": 142,
+  "n_runs": 20
+ },
+ {
+  "seed": 100158,
+  "sum": 781,
+  "value_bound": 161,
+  "best_score": 155,
+  "n_runs": 20
+ },
+ {
+  "seed": 100159,
+  "sum": 764,
+  "value_bound": 161,
+  "best_score": 153,
+  "n_runs": 20
+ },
+ {
+  "seed": 100160,
+  "sum": 786,
+  "value_bound": 161,
+  "best_score": 131,
+  "n_runs": 20
+ },
+ {
+  "seed": 100161,
+  "sum": 826,
+  "value_bound": 161,
+  "best_score": 141,
+  "n_runs": 20
+ },
+ {
+  "seed": 100162,
+  "sum": 837,
+  "value_bound": 161,
+  "best_score": 121,
+  "n_runs": 20
+ },
+ {
+  "seed": 100163,
+  "sum": 810,
+  "value_bound": 162,
+  "best_score": 142,
+  "n_runs": 20
+ },
+ {
+  "seed": 100164,
+  "sum": 822,
+  "value_bound": 161,
+  "best_score": 125,
+  "n_runs": 20
+ },
+ {
+  "seed": 100165,
+  "sum": 770,
+  "value_bound": 162,
+  "best_score": 157,
+  "n_runs": 20
+ },
+ {
+  "seed": 100166,
+  "sum": 783,
+  "value_bound": 161,
+  "best_score": 146,
+  "n_runs": 20
+ },
+ {
+  "seed": 100167,
+  "sum": 783,
+  "value_bound": 161,
+  "best_score": 159,
+  "n_runs": 20
+ },
+ {
+  "seed": 100168,
+  "sum": 808,
+  "value_bound": 161,
+  "best_score": 130,
+  "n_runs": 20
+ },
+ {
+  "seed": 100169,
+  "sum": 786,
+  "value_bound": 161,
+  "best_score": 142,
+  "n_runs": 20
+ },
+ {
+  "seed": 100170,
+  "sum": 741,
+  "value_bound": 161,
+  "best_score": 157,
+  "n_runs": 20
+ },
+ {
+  "seed": 100171,
+  "sum": 777,
+  "value_bound": 161,
+  "best_score": 160,
+  "n_runs": 20
+ },
+ {
+  "seed": 100172,
+  "sum": 809,
+  "value_bound": 161,
+  "best_score": 137,
+  "n_runs": 20
+ },
+ {
+  "seed": 100173,
+  "sum": 835,
+  "value_bound": 161,
+  "best_score": 122,
+  "n_runs": 20
+ },
+ {
+  "seed": 100174,
+  "sum": 812,
+  "value_bound": 161,
+  "best_score": 129,
+  "n_runs": 20
+ },
+ {
+  "seed": 100175,
+  "sum": 831,
+  "value_bound": 161,
+  "best_score": 126,
+  "n_runs": 20
+ },
+ {
+  "seed": 100176,
+  "sum": 798,
+  "value_bound": 161,
+  "best_score": 139,
+  "n_runs": 20
+ },
+ {
+  "seed": 100177,
+  "sum": 845,
+  "value_bound": 161,
+  "best_score": 114,
+  "n_runs": 20
+ },
+ {
+  "seed": 100178,
+  "sum": 838,
+  "value_bound": 161,
+  "best_score": 134,
+  "n_runs": 20
+ },
+ {
+  "seed": 100179,
+  "sum": 834,
+  "value_bound": 161,
+  "best_score": 125,
+  "n_runs": 20
+ },
+ {
+  "seed": 100180,
+  "sum": 845,
+  "value_bound": 161,
+  "best_score": 111,
+  "n_runs": 20
+ },
+ {
+  "seed": 100181,
+  "sum": 755,
+  "value_bound": 161,
+  "best_score": 156,
+  "n_runs": 20
+ },
+ {
+  "seed": 100182,
+  "sum": 775,
+  "value_bound": 161,
+  "best_score": 137,
+  "n_runs": 20
+ },
+ {
+  "seed": 100183,
+  "sum": 829,
+  "value_bound": 161,
+  "best_score": 140,
+  "n_runs": 20
+ },
+ {
+  "seed": 100184,
+  "sum": 793,
+  "value_bound": 161,
+  "best_score": 140,
+  "n_runs": 20
+ },
+ {
+  "seed": 100185,
+  "sum": 835,
+  "value_bound": 161,
+  "best_score": 123,
+  "n_runs": 20
+ },
+ {
+  "seed": 100186,
+  "sum": 785,
+  "value_bound": 161,
+  "best_score": 153,
+  "n_runs": 20
+ },
+ {
+  "seed": 100187,
+  "sum": 779,
+  "value_bound": 161,
+  "best_score": 145,
+  "n_runs": 20
+ },
+ {
+  "seed": 100188,
+  "sum": 858,
+  "value_bound": 161,
+  "best_score": 96,
+  "n_runs": 20
+ },
+ {
+  "seed": 100189,
+  "sum": 858,
+  "value_bound": 161,
+  "best_score": 114,
+  "n_runs": 20
+ },
+ {
+  "seed": 100190,
+  "sum": 784,
+  "value_bound": 161,
+  "best_score": 129,
+  "n_runs": 20
+ },
+ {
+  "seed": 100191,
+  "sum": 826,
+  "value_bound": 161,
+  "best_score": 128,
+  "n_runs": 20
+ },
+ {
+  "seed": 100192,
+  "sum": 863,
+  "value_bound": 161,
+  "best_score": 83,
+  "n_runs": 20
+ },
+ {
+  "seed": 100193,
+  "sum": 794,
+  "value_bound": 161,
+  "best_score": 145,
+  "n_runs": 20
+ },
+ {
+  "seed": 100194,
+  "sum": 790,
+  "value_bound": 162,
+  "best_score": 144,
+  "n_runs": 20
+ },
+ {
+  "seed": 100195,
+  "sum": 806,
+  "value_bound": 161,
+  "best_score": 131,
+  "n_runs": 20
+ },
+ {
+  "seed": 100196,
+  "sum": 830,
+  "value_bound": 162,
+  "best_score": 112,
+  "n_runs": 20
+ },
+ {
+  "seed": 100197,
+  "sum": 821,
+  "value_bound": 161,
+  "best_score": 139,
+  "n_runs": 20
+ },
+ {
+  "seed": 100198,
+  "sum": 796,
+  "value_bound": 161,
+  "best_score": 146,
+  "n_runs": 20
+ },
+ {
+  "seed": 100199,
+  "sum": 817,
+  "value_bound": 161,
+  "best_score": 135,
+  "n_runs": 20
+ },
+ {
+  "seed": 100200,
+  "sum": 807,
+  "value_bound": 161,
+  "best_score": 138,
+  "n_runs": 20
+ },
+ {
+  "seed": 100201,
+  "sum": 838,
+  "value_bound": 161,
+  "best_score": 115,
+  "n_runs": 20
+ },
+ {
+  "seed": 100202,
+  "sum": 797,
+  "value_bound": 161,
+  "best_score": 137,
+  "n_runs": 20
+ },
+ {
+  "seed": 100203,
+  "sum": 785,
+  "value_bound": 161,
+  "best_score": 141,
+  "n_runs": 20
+ },
+ {
+  "seed": 100204,
+  "sum": 795,
+  "value_bound": 161,
+  "best_score": 133,
+  "n_runs": 20
+ },
+ {
+  "seed": 100205,
+  "sum": 776,
+  "value_bound": 161,
+  "best_score": 149,
+  "n_runs": 20
+ },
+ {
+  "seed": 100206,
+  "sum": 821,
+  "value_bound": 161,
+  "best_score": 125,
+  "n_runs": 20
+ },
+ {
+  "seed": 100207,
+  "sum": 843,
+  "value_bound": 161,
+  "best_score": 112,
+  "n_runs": 20
+ },
+ {
+  "seed": 100208,
+  "sum": 796,
+  "value_bound": 161,
+  "best_score": 146,
+  "n_runs": 20
+ },
+ {
+  "seed": 100209,
+  "sum": 785,
+  "value_bound": 161,
+  "best_score": 140,
+  "n_runs": 20
+ },
+ {
+  "seed": 100210,
+  "sum": 826,
+  "value_bound": 161,
+  "best_score": 129,
+  "n_runs": 20
+ },
+ {
+  "seed": 100211,
+  "sum": 805,
+  "value_bound": 161,
+  "best_score": 137,
+  "n_runs": 20
+ },
+ {
+  "seed": 100212,
+  "sum": 755,
+  "value_bound": 161,
+  "best_score": 143,
+  "n_runs": 20
+ },
+ {
+  "seed": 100213,
+  "sum": 757,
+  "value_bound": 161,
+  "best_score": 157,
+  "n_runs": 20
+ },
+ {
+  "seed": 100214,
+  "sum": 758,
+  "value_bound": 161,
+  "best_score": 153,
+  "n_runs": 20
+ },
+ {
+  "seed": 100215,
+  "sum": 851,
+  "value_bound": 161,
+  "best_score": 116,
+  "n_runs": 20
+ },
+ {
+  "seed": 100216,
+  "sum": 762,
+  "value_bound": 161,
+  "best_score": 161,
+  "n_runs": 20
+ },
+ {
+  "seed": 100217,
+  "sum": 855,
+  "value_bound": 161,
+  "best_score": 100,
+  "n_runs": 20
+ },
+ {
+  "seed": 100218,
+  "sum": 798,
+  "value_bound": 161,
+  "best_score": 136,
+  "n_runs": 20
+ },
+ {
+  "seed": 100219,
+  "sum": 833,
+  "value_bound": 161,
+  "best_score": 120,
+  "n_runs": 20
+ },
+ {
+  "seed": 100220,
+  "sum": 843,
+  "value_bound": 161,
+  "best_score": 127,
+  "n_runs": 20
+ },
+ {
+  "seed": 100221,
+  "sum": 866,
+  "value_bound": 161,
+  "best_score": 94,
+  "n_runs": 20
+ },
+ {
+  "seed": 100222,
+  "sum": 825,
+  "value_bound": 161,
+  "best_score": 112,
+  "n_runs": 20
+ },
+ {
+  "seed": 100223,
+  "sum": 810,
+  "value_bound": 162,
+  "best_score": 138,
+  "n_runs": 20
+ },
+ {
+  "seed": 100224,
+  "sum": 808,
+  "value_bound": 161,
+  "best_score": 130,
+  "n_runs": 20
+ },
+ {
+  "seed": 100225,
+  "sum": 847,
+  "value_bound": 161,
+  "best_score": 116,
+  "n_runs": 20
+ },
+ {
+  "seed": 100226,
+  "sum": 822,
+  "value_bound": 161,
+  "best_score": 130,
+  "n_runs": 20
+ },
+ {
+  "seed": 100227,
+  "sum": 793,
+  "value_bound": 161,
+  "best_score": 150,
+  "n_runs": 20
+ },
+ {
+  "seed": 100228,
+  "sum": 820,
+  "value_bound": 162,
+  "best_score": 118,
+  "n_runs": 20
+ },
+ {
+  "seed": 100229,
+  "sum": 801,
+  "value_bound": 161,
+  "best_score": 130,
+  "n_runs": 20
+ },
+ {
+  "seed": 100230,
+  "sum": 815,
+  "value_bound": 161,
+  "best_score": 139,
+  "n_runs": 20
+ },
+ {
+  "seed": 100231,
+  "sum": 820,
+  "value_bound": 162,
+  "best_score": 117,
+  "n_runs": 20
+ },
+ {
+  "seed": 100232,
+  "sum": 774,
+  "value_bound": 161,
+  "best_score": 151,
+  "n_runs": 20
+ },
+ {
+  "seed": 100233,
+  "sum": 856,
+  "value_bound": 161,
+  "best_score": 95,
+  "n_runs": 20
+ },
+ {
+  "seed": 100234,
+  "sum": 788,
+  "value_bound": 161,
+  "best_score": 138,
+  "n_runs": 20
+ },
+ {
+  "seed": 100235,
+  "sum": 836,
+  "value_bound": 161,
+  "best_score": 134,
+  "n_runs": 20
+ },
+ {
+  "seed": 100236,
+  "sum": 797,
+  "value_bound": 161,
+  "best_score": 146,
+  "n_runs": 20
+ },
+ {
+  "seed": 100237,
+  "sum": 791,
+  "value_bound": 161,
+  "best_score": 127,
+  "n_runs": 20
+ },
+ {
+  "seed": 100238,
+  "sum": 796,
+  "value_bound": 161,
+  "best_score": 152,
+  "n_runs": 20
+ },
+ {
+  "seed": 100239,
+  "sum": 810,
+  "value_bound": 162,
+  "best_score": 138,
+  "n_runs": 20
+ },
+ {
+  "seed": 100240,
+  "sum": 853,
+  "value_bound": 161,
+  "best_score": 116,
+  "n_runs": 20
+ },
+ {
+  "seed": 100241,
+  "sum": 836,
+  "value_bound": 161,
+  "best_score": 112,
+  "n_runs": 20
+ },
+ {
+  "seed": 100242,
+  "sum": 860,
+  "value_bound": 162,
+  "best_score": 117,
+  "n_runs": 20
+ },
+ {
+  "seed": 100243,
+  "sum": 814,
+  "value_bound": 161,
+  "best_score": 125,
+  "n_runs": 20
+ },
+ {
+  "seed": 100244,
+  "sum": 790,
+  "value_bound": 162,
+  "best_score": 133,
+  "n_runs": 20
+ },
+ {
+  "seed": 100245,
+  "sum": 801,
+  "value_bound": 161,
+  "best_score": 140,
+  "n_runs": 20
+ },
+ {
+  "seed": 100246,
+  "sum": 825,
+  "value_bound": 161,
+  "best_score": 123,
+  "n_runs": 20
+ },
+ {
+  "seed": 100247,
+  "sum": 752,
+  "value_bound": 161,
+  "best_score": 158,
+  "n_runs": 20
+ },
+ {
+  "seed": 100248,
+  "sum": 793,
+  "value_bound": 161,
+  "best_score": 133,
+  "n_runs": 20
+ },
+ {
+  "seed": 100249,
+  "sum": 821,
+  "value_bound": 161,
+  "best_score": 133,
+  "n_runs": 20
+ },
+ {
+  "seed": 100250,
+  "sum": 811,
+  "value_bound": 161,
+  "best_score": 132,
+  "n_runs": 20
+ },
+ {
+  "seed": 100251,
+  "sum": 833,
+  "value_bound": 161,
+  "best_score": 130,
+  "n_runs": 20
+ },
+ {
+  "seed": 100252,
+  "sum": 839,
+  "value_bound": 161,
+  "best_score": 133,
+  "n_runs": 20
+ },
+ {
+  "seed": 100253,
+  "sum": 861,
+  "value_bound": 161,
+  "best_score": 97,
+  "n_runs": 20
+ },
+ {
+  "seed": 100254,
+  "sum": 806,
+  "value_bound": 161,
+  "best_score": 144,
+  "n_runs": 20
+ },
+ {
+  "seed": 100255,
+  "sum": 761,
+  "value_bound": 161,
+  "best_score": 146,
+  "n_runs": 20
+ },
+ {
+  "seed": 100256,
+  "sum": 769,
+  "value_bound": 161,
+  "best_score": 154,
+  "n_runs": 20
+ },
+ {
+  "seed": 100257,
+  "sum": 835,
+  "value_bound": 161,
+  "best_score": 123,
+  "n_runs": 20
+ },
+ {
+  "seed": 100258,
+  "sum": 732,
+  "value_bound": 161,
+  "best_score": 161,
+  "n_runs": 20
+ },
+ {
+  "seed": 100259,
+  "sum": 731,
+  "value_bound": 161,
+  "best_score": 159,
+  "n_runs": 20
+ },
+ {
+  "seed": 100260,
+  "sum": 789,
+  "value_bound": 161,
+  "best_score": 139,
+  "n_runs": 20
+ },
+ {
+  "seed": 100261,
+  "sum": 790,
+  "value_bound": 162,
+  "best_score": 137,
+  "n_runs": 20
+ },
+ {
+  "seed": 100262,
+  "sum": 811,
+  "value_bound": 161,
+  "best_score": 136,
+  "n_runs": 20
+ },
+ {
+  "seed": 100263,
+  "sum": 833,
+  "value_bound": 161,
+  "best_score": 127,
+  "n_runs": 20
+ },
+ {
+  "seed": 100264,
+  "sum": 790,
+  "value_bound": 162,
+  "best_score": 137,
+  "n_runs": 20
+ },
+ {
+  "seed": 100265,
+  "sum": 800,
+  "value_bound": 162,
+  "best_score": 126,
+  "n_runs": 20
+ },
+ {
+  "seed": 100266,
+  "sum": 824,
+  "value_bound": 161,
+  "best_score": 118,
+  "n_runs": 20
+ },
+ {
+  "seed": 100267,
+  "sum": 831,
+  "value_bound": 161,
+  "best_score": 134,
+  "n_runs": 20
+ },
+ {
+  "seed": 100268,
+  "sum": 831,
+  "value_bound": 161,
+  "best_score": 126,
+  "n_runs": 20
+ },
+ {
+  "seed": 100269,
+  "sum": 808,
+  "value_bound": 161,
+  "best_score": 130,
+  "n_runs": 20
+ },
+ {
+  "seed": 100270,
+  "sum": 795,
+  "value_bound": 161,
+  "best_score": 135,
+  "n_runs": 20
+ },
+ {
+  "seed": 100271,
+  "sum": 853,
+  "value_bound": 161,
+  "best_score": 105,
+  "n_runs": 20
+ },
+ {
+  "seed": 100272,
+  "sum": 797,
+  "value_bound": 161,
+  "best_score": 123,
+  "n_runs": 20
+ },
+ {
+  "seed": 100273,
+  "sum": 785,
+  "value_bound": 161,
+  "best_score": 140,
+  "n_runs": 20
+ },
+ {
+  "seed": 100274,
+  "sum": 816,
+  "value_bound": 161,
+  "best_score": 117,
+  "n_runs": 20
+ },
+ {
+  "seed": 100275,
+  "sum": 866,
+  "value_bound": 161,
+  "best_score": 114,
+  "n_runs": 20
+ },
+ {
+  "seed": 100276,
+  "sum": 775,
+  "value_bound": 161,
+  "best_score": 148,
+  "n_runs": 20
+ },
+ {
+  "seed": 100277,
+  "sum": 821,
+  "value_bound": 161,
+  "best_score": 131,
+  "n_runs": 20
+ },
+ {
+  "seed": 100278,
+  "sum": 778,
+  "value_bound": 161,
+  "best_score": 148,
+  "n_runs": 20
+ },
+ {
+  "seed": 100279,
+  "sum": 813,
+  "value_bound": 161,
+  "best_score": 126,
+  "n_runs": 20
+ },
+ {
+  "seed": 100280,
+  "sum": 816,
+  "value_bound": 161,
+  "best_score": 122,
+  "n_runs": 20
+ },
+ {
+  "seed": 100281,
+  "sum": 785,
+  "value_bound": 161,
+  "best_score": 137,
+  "n_runs": 20
+ },
+ {
+  "seed": 100282,
+  "sum": 819,
+  "value_bound": 161,
+  "best_score": 128,
+  "n_runs": 20
+ },
+ {
+  "seed": 100283,
+  "sum": 871,
+  "value_bound": 161,
+  "best_score": 101,
+  "n_runs": 20
+ },
+ {
+  "seed": 100284,
+  "sum": 833,
+  "value_bound": 161,
+  "best_score": 111,
+  "n_runs": 20
+ },
+ {
+  "seed": 100285,
+  "sum": 810,
+  "value_bound": 162,
+  "best_score": 139,
+  "n_runs": 20
+ },
+ {
+  "seed": 100286,
+  "sum": 778,
+  "value_bound": 161,
+  "best_score": 142,
+  "n_runs": 20
+ },
+ {
+  "seed": 100287,
+  "sum": 816,
+  "value_bound": 161,
+  "best_score": 137,
+  "n_runs": 20
+ },
+ {
+  "seed": 100288,
+  "sum": 817,
+  "value_bound": 161,
+  "best_score": 126,
+  "n_runs": 20
+ },
+ {
+  "seed": 100289,
+  "sum": 847,
+  "value_bound": 161,
+  "best_score": 118,
+  "n_runs": 20
+ },
+ {
+  "seed": 100290,
+  "sum": 800,
+  "value_bound": 162,
+  "best_score": 144,
+  "n_runs": 20
+ },
+ {
+  "seed": 100291,
+  "sum": 794,
+  "value_bound": 161,
+  "best_score": 128,
+  "n_runs": 20
+ },
+ {
+  "seed": 100292,
+  "sum": 834,
+  "value_bound": 161,
+  "best_score": 125,
+  "n_runs": 20
+ },
+ {
+  "seed": 100293,
+  "sum": 783,
+  "value_bound": 161,
+  "best_score": 150,
+  "n_runs": 20
+ },
+ {
+  "seed": 100294,
+  "sum": 817,
+  "value_bound": 161,
+  "best_score": 139,
+  "n_runs": 20
+ },
+ {
+  "seed": 100295,
+  "sum": 771,
+  "value_bound": 161,
+  "best_score": 146,
+  "n_runs": 20
+ },
+ {
+  "seed": 100296,
+  "sum": 805,
+  "value_bound": 161,
+  "best_score": 145,
+  "n_runs": 20
+ },
+ {
+  "seed": 100297,
+  "sum": 884,
+  "value_bound": 161,
+  "best_score": 104,
+  "n_runs": 20
+ },
+ {
+  "seed": 100298,
+  "sum": 825,
+  "value_bound": 161,
+  "best_score": 136,
+  "n_runs": 20
+ },
+ {
+  "seed": 100299,
+  "sum": 832,
+  "value_bound": 161,
+  "best_score": 129,
+  "n_runs": 20
+ },
+ {
+  "seed": 100300,
+  "sum": 857,
+  "value_bound": 161,
+  "best_score": 122,
+  "n_runs": 20
+ },
+ {
+  "seed": 100301,
+  "sum": 869,
+  "value_bound": 161,
+  "best_score": 117,
+  "n_runs": 20
+ },
+ {
+  "seed": 100302,
+  "sum": 781,
+  "value_bound": 161,
+  "best_score": 146,
+  "n_runs": 20
+ },
+ {
+  "seed": 100303,
+  "sum": 799,
+  "value_bound": 161,
+  "best_score": 135,
+  "n_runs": 20
+ },
+ {
+  "seed": 100304,
+  "sum": 827,
+  "value_bound": 161,
+  "best_score": 135,
+  "n_runs": 20
+ },
+ {
+  "seed": 100305,
+  "sum": 831,
+  "value_bound": 161,
+  "best_score": 116,
+  "n_runs": 20
+ },
+ {
+  "seed": 100306,
+  "sum": 816,
+  "value_bound": 161,
+  "best_score": 133,
+  "n_runs": 20
+ },
+ {
+  "seed": 100307,
+  "sum": 854,
+  "value_bound": 161,
+  "best_score": 120,
+  "n_runs": 20
+ },
+ {
+  "seed": 100308,
+  "sum": 792,
+  "value_bound": 161,
+  "best_score": 146,
+  "n_runs": 20
+ },
+ {
+  "seed": 100309,
+  "sum": 736,
+  "value_bound": 161,
+  "best_score": 160,
+  "n_runs": 20
+ },
+ {
+  "seed": 100310,
+  "sum": 800,
+  "value_bound": 162,
+  "best_score": 138,
+  "n_runs": 20
+ },
+ {
+  "seed": 100311,
+  "sum": 734,
+  "value_bound": 161,
+  "best_score": 160,
+  "n_runs": 20
+ },
+ {
+  "seed": 100312,
+  "sum": 829,
+  "value_bound": 161,
+  "best_score": 125,
+  "n_runs": 20
+ },
+ {
+  "seed": 100313,
+  "sum": 851,
+  "value_bound": 161,
+  "best_score": 134,
+  "n_runs": 20
+ },
+ {
+  "seed": 100314,
+  "sum": 816,
+  "value_bound": 161,
+  "best_score": 138,
+  "n_runs": 20
+ },
+ {
+  "seed": 100315,
+  "sum": 822,
+  "value_bound": 161,
+  "best_score": 136,
+  "n_runs": 20
+ },
+ {
+  "seed": 100316,
+  "sum": 792,
+  "value_bound": 161,
+  "best_score": 148,
+  "n_runs": 20
+ },
+ {
+  "seed": 100317,
+  "sum": 832,
+  "value_bound": 161,
+  "best_score": 119,
+  "n_runs": 20
+ },
+ {
+  "seed": 100318,
+  "sum": 811,
+  "value_bound": 161,
+  "best_score": 113,
+  "n_runs": 20
+ },
+ {
+  "seed": 100319,
+  "sum": 835,
+  "value_bound": 161,
+  "best_score": 121,
+  "n_runs": 20
+ },
+ {
+  "seed": 100320,
+  "sum": 842,
+  "value_bound": 161,
+  "best_score": 125,
+  "n_runs": 20
+ },
+ {
+  "seed": 100321,
+  "sum": 781,
+  "value_bound": 161,
+  "best_score": 149,
+  "n_runs": 20
+ },
+ {
+  "seed": 100322,
+  "sum": 830,
+  "value_bound": 162,
+  "best_score": 124,
+  "n_runs": 20
+ },
+ {
+  "seed": 100323,
+  "sum": 817,
+  "value_bound": 161,
+  "best_score": 137,
+  "n_runs": 20
+ },
+ {
+  "seed": 100324,
+  "sum": 746,
+  "value_bound": 161,
+  "best_score": 157,
+  "n_runs": 20
+ },
+ {
+  "seed": 100325,
+  "sum": 829,
+  "value_bound": 161,
+  "best_score": 136,
+  "n_runs": 20
+ },
+ {
+  "seed": 100326,
+  "sum": 821,
+  "value_bound": 161,
+  "best_score": 138,
+  "n_runs": 20
+ },
+ {
+  "seed": 100327,
+  "sum": 825,
+  "value_bound": 161,
+  "best_score": 136,
+  "n_runs": 20
+ },
+ {
+  "seed": 100328,
+  "sum": 796,
+  "value_bound": 161,
+  "best_score": 139,
+  "n_runs": 20
+ },
+ {
+  "seed": 100329,
+  "sum": 822,
+  "value_bound": 161,
+  "best_score": 133,
+  "n_runs": 20
+ },
+ {
+  "seed": 100330,
+  "sum": 845,
+  "value_bound": 161,
+  "best_score": 121,
+  "n_runs": 20
+ },
+ {
+  "seed": 100331,
+  "sum": 762,
+  "value_bound": 161,
+  "best_score": 157,
+  "n_runs": 20
+ },
+ {
+  "seed": 100332,
+  "sum": 826,
+  "value_bound": 161,
+  "best_score": 119,
+  "n_runs": 20
+ },
+ {
+  "seed": 100333,
+  "sum": 795,
+  "value_bound": 161,
+  "best_score": 143,
+  "n_runs": 20
+ },
+ {
+  "seed": 100334,
+  "sum": 830,
+  "value_bound": 162,
+  "best_score": 125,
+  "n_runs": 20
+ },
+ {
+  "seed": 100335,
+  "sum": 819,
+  "value_bound": 161,
+  "best_score": 107,
+  "n_runs": 20
+ },
+ {
+  "seed": 100336,
+  "sum": 847,
+  "value_bound": 161,
+  "best_score": 118,
+  "n_runs": 20
+ },
+ {
+  "seed": 100337,
+  "sum": 835,
+  "value_bound": 161,
+  "best_score": 135,
+  "n_runs": 20
+ },
+ {
+  "seed": 100338,
+  "sum": 818,
+  "value_bound": 161,
+  "best_score": 136,
+  "n_runs": 20
+ },
+ {
+  "seed": 100339,
+  "sum": 839,
+  "value_bound": 161,
+  "best_score": 134,
+  "n_runs": 20
+ },
+ {
+  "seed": 100340,
+  "sum": 799,
+  "value_bound": 161,
+  "best_score": 135,
+  "n_runs": 20
+ },
+ {
+  "seed": 100341,
+  "sum": 858,
+  "value_bound": 161,
+  "best_score": 113,
+  "n_runs": 20
+ },
+ {
+  "seed": 100342,
+  "sum": 803,
+  "value_bound": 161,
+  "best_score": 123,
+  "n_runs": 20
+ },
+ {
+  "seed": 100343,
+  "sum": 812,
+  "value_bound": 161,
+  "best_score": 127,
+  "n_runs": 20
+ },
+ {
+  "seed": 100344,
+  "sum": 764,
+  "value_bound": 161,
+  "best_score": 156,
+  "n_runs": 20
+ },
+ {
+  "seed": 100345,
+  "sum": 816,
+  "value_bound": 161,
+  "best_score": 142,
+  "n_runs": 20
+ },
+ {
+  "seed": 100346,
+  "sum": 811,
+  "value_bound": 161,
+  "best_score": 110,
+  "n_runs": 20
+ },
+ {
+  "seed": 100347,
+  "sum": 843,
+  "value_bound": 161,
+  "best_score": 135,
+  "n_runs": 20
+ },
+ {
+  "seed": 100348,
+  "sum": 840,
+  "value_bound": 162,
+  "best_score": 123,
+  "n_runs": 20
+ },
+ {
+  "seed": 100349,
+  "sum": 781,
+  "value_bound": 161,
+  "best_score": 152,
+  "n_runs": 20
+ },
+ {
+  "seed": 100350,
+  "sum": 735,
+  "value_bound": 161,
+  "best_score": 159,
+  "n_runs": 20
+ },
+ {
+  "seed": 100351,
+  "sum": 867,
+  "value_bound": 161,
+  "best_score": 103,
+  "n_runs": 20
+ },
+ {
+  "seed": 100352,
+  "sum": 804,
+  "value_bound": 161,
+  "best_score": 133,
+  "n_runs": 20
+ },
+ {
+  "seed": 100353,
+  "sum": 807,
+  "value_bound": 161,
+  "best_score": 132,
+  "n_runs": 20
+ },
+ {
+  "seed": 100354,
+  "sum": 776,
+  "value_bound": 161,
+  "best_score": 139,
+  "n_runs": 20
+ },
+ {
+  "seed": 100355,
+  "sum": 798,
+  "value_bound": 161,
+  "best_score": 138,
+  "n_runs": 20
+ },
+ {
+  "seed": 100356,
+  "sum": 858,
+  "value_bound": 161,
+  "best_score": 115,
+  "n_runs": 20
+ },
+ {
+  "seed": 100357,
+  "sum": 889,
+  "value_bound": 161,
+  "best_score": 107,
+  "n_runs": 20
+ },
+ {
+  "seed": 100358,
+  "sum": 841,
+  "value_bound": 161,
+  "best_score": 122,
+  "n_runs": 20
+ },
+ {
+  "seed": 100359,
+  "sum": 747,
+  "value_bound": 161,
+  "best_score": 148,
+  "n_runs": 20
+ },
+ {
+  "seed": 100360,
+  "sum": 821,
+  "value_bound": 161,
+  "best_score": 129,
+  "n_runs": 20
+ },
+ {
+  "seed": 100361,
+  "sum": 823,
+  "value_bound": 161,
+  "best_score": 124,
+  "n_runs": 20
+ },
+ {
+  "seed": 100362,
+  "sum": 840,
+  "value_bound": 162,
+  "best_score": 119,
+  "n_runs": 20
+ },
+ {
+  "seed": 100363,
+  "sum": 799,
+  "value_bound": 161,
+  "best_score": 133,
+  "n_runs": 20
+ },
+ {
+  "seed": 100364,
+  "sum": 834,
+  "value_bound": 161,
+  "best_score": 126,
+  "n_runs": 20
+ },
+ {
+  "seed": 100365,
+  "sum": 823,
+  "value_bound": 161,
+  "best_score": 139,
+  "n_runs": 20
+ },
+ {
+  "seed": 100366,
+  "sum": 818,
+  "value_bound": 161,
+  "best_score": 124,
+  "n_runs": 20
+ },
+ {
+  "seed": 100367,
+  "sum": 823,
+  "value_bound": 161,
+  "best_score": 130,
+  "n_runs": 20
+ },
+ {
+  "seed": 100368,
+  "sum": 845,
+  "value_bound": 161,
+  "best_score": 120,
+  "n_runs": 20
+ },
+ {
+  "seed": 100369,
+  "sum": 836,
+  "value_bound": 161,
+  "best_score": 122,
+  "n_runs": 20
+ },
+ {
+  "seed": 100370,
+  "sum": 816,
+  "value_bound": 161,
+  "best_score": 138,
+  "n_runs": 20
+ },
+ {
+  "seed": 100371,
+  "sum": 804,
+  "value_bound": 161,
+  "best_score": 124,
+  "n_runs": 20
+ },
+ {
+  "seed": 100372,
+  "sum": 812,
+  "value_bound": 161,
+  "best_score": 127,
+  "n_runs": 20
+ },
+ {
+  "seed": 100373,
+  "sum": 815,
+  "value_bound": 161,
+  "best_score": 114,
+  "n_runs": 20
+ },
+ {
+  "seed": 100374,
+  "sum": 813,
+  "value_bound": 161,
+  "best_score": 132,
+  "n_runs": 20
+ },
+ {
+  "seed": 100375,
+  "sum": 801,
+  "value_bound": 161,
+  "best_score": 135,
+  "n_runs": 20
+ },
+ {
+  "seed": 100376,
+  "sum": 849,
+  "value_bound": 161,
+  "best_score": 119,
+  "n_runs": 20
+ },
+ {
+  "seed": 100377,
+  "sum": 788,
+  "value_bound": 161,
+  "best_score": 151,
+  "n_runs": 20
+ },
+ {
+  "seed": 100378,
+  "sum": 796,
+  "value_bound": 161,
+  "best_score": 144,
+  "n_runs": 20
+ },
+ {
+  "seed": 100379,
+  "sum": 865,
+  "value_bound": 161,
+  "best_score": 108,
+  "n_runs": 20
+ },
+ {
+  "seed": 100380,
+  "sum": 831,
+  "value_bound": 161,
+  "best_score": 127,
+  "n_runs": 20
+ },
+ {
+  "seed": 100381,
+  "sum": 856,
+  "value_bound": 161,
+  "best_score": 110,
+  "n_runs": 20
+ },
+ {
+  "seed": 100382,
+  "sum": 771,
+  "value_bound": 161,
+  "best_score": 143,
+  "n_runs": 20
+ },
+ {
+  "seed": 100383,
+  "sum": 811,
+  "value_bound": 161,
+  "best_score": 148,
+  "n_runs": 20
+ },
+ {
+  "seed": 100384,
+  "sum": 821,
+  "value_bound": 161,
+  "best_score": 136,
+  "n_runs": 20
+ },
+ {
+  "seed": 100385,
+  "sum": 798,
+  "value_bound": 161,
+  "best_score": 136,
+  "n_runs": 20
+ },
+ {
+  "seed": 100386,
+  "sum": 763,
+  "value_bound": 161,
+  "best_score": 157,
+  "n_runs": 20
+ },
+ {
+  "seed": 100387,
+  "sum": 802,
+  "value_bound": 161,
+  "best_score": 145,
+  "n_runs": 20
+ },
+ {
+  "seed": 100388,
+  "sum": 818,
+  "value_bound": 161,
+  "best_score": 135,
+  "n_runs": 20
+ },
+ {
+  "seed": 100389,
+  "sum": 821,
+  "value_bound": 161,
+  "best_score": 107,
+  "n_runs": 20
+ },
+ {
+  "seed": 100390,
+  "sum": 812,
+  "value_bound": 161,
+  "best_score": 127,
+  "n_runs": 20
+ },
+ {
+  "seed": 100391,
+  "sum": 893,
+  "value_bound": 161,
+  "best_score": 91,
+  "n_runs": 20
+ },
+ {
+  "seed": 100392,
+  "sum": 833,
+  "value_bound": 161,
+  "best_score": 129,
+  "n_runs": 20
+ },
+ {
+  "seed": 100393,
+  "sum": 775,
+  "value_bound": 161,
+  "best_score": 143,
+  "n_runs": 20
+ },
+ {
+  "seed": 100394,
+  "sum": 873,
+  "value_bound": 161,
+  "best_score": 106,
+  "n_runs": 20
+ },
+ {
+  "seed": 100395,
+  "sum": 834,
+  "value_bound": 161,
+  "best_score": 125,
+  "n_runs": 20
+ },
+ {
+  "seed": 100396,
+  "sum": 828,
+  "value_bound": 161,
+  "best_score": 131,
+  "n_runs": 20
+ },
+ {
+  "seed": 100397,
+  "sum": 787,
+  "value_bound": 161,
+  "best_score": 143,
+  "n_runs": 20
+ },
+ {
+  "seed": 100398,
+  "sum": 815,
+  "value_bound": 161,
+  "best_score": 128,
+  "n_runs": 20
+ },
+ {
+  "seed": 100399,
+  "sum": 839,
+  "value_bound": 161,
+  "best_score": 120,
+  "n_runs": 20
+ },
+ {
+  "seed": 100400,
+  "sum": 801,
+  "value_bound": 161,
+  "best_score": 143,
+  "n_runs": 20
+ },
+ {
+  "seed": 100401,
+  "sum": 804,
+  "value_bound": 161,
+  "best_score": 134,
+  "n_runs": 20
+ },
+ {
+  "seed": 100402,
+  "sum": 826,
+  "value_bound": 161,
+  "best_score": 130,
+  "n_runs": 20
+ },
+ {
+  "seed": 100403,
+  "sum": 842,
+  "value_bound": 161,
+  "best_score": 113,
+  "n_runs": 20
+ },
+ {
+  "seed": 100404,
+  "sum": 812,
+  "value_bound": 161,
+  "best_score": 145,
+  "n_runs": 20
+ },
+ {
+  "seed": 100405,
+  "sum": 757,
+  "value_bound": 161,
+  "best_score": 152,
+  "n_runs": 20
+ },
+ {
+  "seed": 100406,
+  "sum": 772,
+  "value_bound": 161,
+  "best_score": 156,
+  "n_runs": 20
+ },
+ {
+  "seed": 100407,
+  "sum": 832,
+  "value_bound": 161,
+  "best_score": 121,
+  "n_runs": 20
+ },
+ {
+  "seed": 100408,
+  "sum": 783,
+  "value_bound": 161,
+  "best_score": 143,
+  "n_runs": 20
+ },
+ {
+  "seed": 100409,
+  "sum": 851,
+  "value_bound": 161,
+  "best_score": 109,
+  "n_runs": 20
+ },
+ {
+  "seed": 100410,
+  "sum": 861,
+  "value_bound": 161,
+  "best_score": 120,
+  "n_runs": 20
+ },
+ {
+  "seed": 100411,
+  "sum": 842,
+  "value_bound": 161,
+  "best_score": 125,
+  "n_runs": 20
+ },
+ {
+  "seed": 100412,
+  "sum": 848,
+  "value_bound": 161,
+  "best_score": 122,
+  "n_runs": 20
+ },
+ {
+  "seed": 100413,
+  "sum": 859,
+  "value_bound": 161,
+  "best_score": 118,
+  "n_runs": 20
+ },
+ {
+  "seed": 100414,
+  "sum": 858,
+  "value_bound": 161,
+  "best_score": 126,
+  "n_runs": 20
+ },
+ {
+  "seed": 100415,
+  "sum": 833,
+  "value_bound": 161,
+  "best_score": 118,
+  "n_runs": 20
+ },
+ {
+  "seed": 100416,
+  "sum": 824,
+  "value_bound": 161,
+  "best_score": 121,
+  "n_runs": 20
+ },
+ {
+  "seed": 100417,
+  "sum": 839,
+  "value_bound": 161,
+  "best_score": 112,
+  "n_runs": 20
+ },
+ {
+  "seed": 100418,
+  "sum": 762,
+  "value_bound": 161,
+  "best_score": 157,
+  "n_runs": 20
+ },
+ {
+  "seed": 100419,
+  "sum": 811,
+  "value_bound": 161,
+  "best_score": 103,
+  "n_runs": 20
+ },
+ {
+  "seed": 100420,
+  "sum": 818,
+  "value_bound": 161,
+  "best_score": 127,
+  "n_runs": 20
+ },
+ {
+  "seed": 100421,
+  "sum": 779,
+  "value_bound": 161,
+  "best_score": 148,
+  "n_runs": 20
+ },
+ {
+  "seed": 100422,
+  "sum": 747,
+  "value_bound": 161,
+  "best_score": 152,
+  "n_runs": 20
+ },
+ {
+  "seed": 100423,
+  "sum": 798,
+  "value_bound": 161,
+  "best_score": 139,
+  "n_runs": 20
+ },
+ {
+  "seed": 100424,
+  "sum": 743,
+  "value_bound": 161,
+  "best_score": 161,
+  "n_runs": 20
+ },
+ {
+  "seed": 100425,
+  "sum": 779,
+  "value_bound": 161,
+  "best_score": 153,
+  "n_runs": 20
+ },
+ {
+  "seed": 100426,
+  "sum": 817,
+  "value_bound": 161,
+  "best_score": 123,
+  "n_runs": 20
+ },
+ {
+  "seed": 100427,
+  "sum": 777,
+  "value_bound": 161,
+  "best_score": 154,
+  "n_runs": 20
+ },
+ {
+  "seed": 100428,
+  "sum": 759,
+  "value_bound": 161,
+  "best_score": 158,
+  "n_runs": 20
+ },
+ {
+  "seed": 100429,
+  "sum": 803,
+  "value_bound": 161,
+  "best_score": 126,
+  "n_runs": 20
+ },
+ {
+  "seed": 100430,
+  "sum": 813,
+  "value_bound": 161,
+  "best_score": 127,
+  "n_runs": 20
+ },
+ {
+  "seed": 100431,
+  "sum": 822,
+  "value_bound": 161,
+  "best_score": 131,
+  "n_runs": 20
+ },
+ {
+  "seed": 100432,
+  "sum": 840,
+  "value_bound": 162,
+  "best_score": 127,
+  "n_runs": 20
+ },
+ {
+  "seed": 100433,
+  "sum": 826,
+  "value_bound": 161,
+  "best_score": 130,
+  "n_runs": 20
+ },
+ {
+  "seed": 100434,
+  "sum": 848,
+  "value_bound": 161,
+  "best_score": 100,
+  "n_runs": 20
+ },
+ {
+  "seed": 100435,
+  "sum": 812,
+  "value_bound": 161,
+  "best_score": 139,
+  "n_runs": 20
+ },
+ {
+  "seed": 100436,
+  "sum": 805,
+  "value_bound": 161,
+  "best_score": 125,
+  "n_runs": 20
+ },
+ {
+  "seed": 100437,
+  "sum": 813,
+  "value_bound": 161,
+  "best_score": 132,
+  "n_runs": 20
+ },
+ {
+  "seed": 100438,
+  "sum": 844,
+  "value_bound": 161,
+  "best_score": 127,
+  "n_runs": 20
+ },
+ {
+  "seed": 100439,
+  "sum": 842,
+  "value_bound": 161,
+  "best_score": 113,
+  "n_runs": 20
+ },
+ {
+  "seed": 100440,
+  "sum": 833,
+  "value_bound": 161,
+  "best_score": 138,
+  "n_runs": 20
+ },
+ {
+  "seed": 100441,
+  "sum": 747,
+  "value_bound": 161,
+  "best_score": 160,
+  "n_runs": 20
+ },
+ {
+  "seed": 100442,
+  "sum": 765,
+  "value_bound": 161,
+  "best_score": 145,
+  "n_runs": 20
+ },
+ {
+  "seed": 100443,
+  "sum": 810,
+  "value_bound": 162,
+  "best_score": 123,
+  "n_runs": 20
+ },
+ {
+  "seed": 100444,
+  "sum": 829,
+  "value_bound": 161,
+  "best_score": 122,
+  "n_runs": 20
+ },
+ {
+  "seed": 100445,
+  "sum": 821,
+  "value_bound": 161,
+  "best_score": 125,
+  "n_runs": 20
+ },
+ {
+  "seed": 100446,
+  "sum": 801,
+  "value_bound": 161,
+  "best_score": 145,
+  "n_runs": 20
+ },
+ {
+  "seed": 100447,
+  "sum": 839,
+  "value_bound": 161,
+  "best_score": 120,
+  "n_runs": 20
+ },
+ {
+  "seed": 100448,
+  "sum": 817,
+  "value_bound": 161,
+  "best_score": 138,
+  "n_runs": 20
+ },
+ {
+  "seed": 100449,
+  "sum": 791,
+  "value_bound": 161,
+  "best_score": 146,
+  "n_runs": 20
+ },
+ {
+  "seed": 100450,
+  "sum": 874,
+  "value_bound": 161,
+  "best_score": 99,
+  "n_runs": 20
+ },
+ {
+  "seed": 100451,
+  "sum": 822,
+  "value_bound": 161,
+  "best_score": 133,
+  "n_runs": 20
+ },
+ {
+  "seed": 100452,
+  "sum": 851,
+  "value_bound": 161,
+  "best_score": 111,
+  "n_runs": 20
+ },
+ {
+  "seed": 100453,
+  "sum": 786,
+  "value_bound": 161,
+  "best_score": 147,
+  "n_runs": 20
+ },
+ {
+  "seed": 100454,
+  "sum": 885,
+  "value_bound": 161,
+  "best_score": 110,
+  "n_runs": 20
+ },
+ {
+  "seed": 100455,
+  "sum": 825,
+  "value_bound": 161,
+  "best_score": 135,
+  "n_runs": 20
+ },
+ {
+  "seed": 100456,
+  "sum": 776,
+  "value_bound": 161,
+  "best_score": 147,
+  "n_runs": 20
+ },
+ {
+  "seed": 100457,
+  "sum": 777,
+  "value_bound": 161,
+  "best_score": 145,
+  "n_runs": 20
+ },
+ {
+  "seed": 100458,
+  "sum": 863,
+  "value_bound": 161,
+  "best_score": 125,
+  "n_runs": 20
+ },
+ {
+  "seed": 100459,
+  "sum": 773,
+  "value_bound": 161,
+  "best_score": 146,
+  "n_runs": 20
+ },
+ {
+  "seed": 100460,
+  "sum": 828,
+  "value_bound": 161,
+  "best_score": 134,
+  "n_runs": 20
+ },
+ {
+  "seed": 100461,
+  "sum": 803,
+  "value_bound": 161,
+  "best_score": 132,
+  "n_runs": 20
+ },
+ {
+  "seed": 100462,
+  "sum": 760,
+  "value_bound": 162,
+  "best_score": 153,
+  "n_runs": 20
+ },
+ {
+  "seed": 100463,
+  "sum": 729,
+  "value_bound": 161,
+  "best_score": 159,
+  "n_runs": 20
+ },
+ {
+  "seed": 100464,
+  "sum": 789,
+  "value_bound": 161,
+  "best_score": 141,
+  "n_runs": 20
+ },
+ {
+  "seed": 100465,
+  "sum": 820,
+  "value_bound": 162,
+  "best_score": 122,
+  "n_runs": 20
+ },
+ {
+  "seed": 100466,
+  "sum": 780,
+  "value_bound": 162,
+  "best_score": 147,
+  "n_runs": 20
+ },
+ {
+  "seed": 100467,
+  "sum": 833,
+  "value_bound": 161,
+  "best_score": 134,
+  "n_runs": 20
+ },
+ {
+  "seed": 100468,
+  "sum": 804,
+  "value_bound": 161,
+  "best_score": 139,
+  "n_runs": 20
+ },
+ {
+  "seed": 100469,
+  "sum": 835,
+  "value_bound": 161,
+  "best_score": 124,
+  "n_runs": 20
+ },
+ {
+  "seed": 100470,
+  "sum": 857,
+  "value_bound": 161,
+  "best_score": 120,
+  "n_runs": 20
+ },
+ {
+  "seed": 100471,
+  "sum": 813,
+  "value_bound": 161,
+  "best_score": 127,
+  "n_runs": 20
+ },
+ {
+  "seed": 100472,
+  "sum": 823,
+  "value_bound": 161,
+  "best_score": 124,
+  "n_runs": 20
+ },
+ {
+  "seed": 100473,
+  "sum": 838,
+  "value_bound": 161,
+  "best_score": 126,
+  "n_runs": 20
+ },
+ {
+  "seed": 100474,
+  "sum": 818,
+  "value_bound": 161,
+  "best_score": 125,
+  "n_runs": 20
+ },
+ {
+  "seed": 100475,
+  "sum": 833,
+  "value_bound": 161,
+  "best_score": 122,
+  "n_runs": 20
+ },
+ {
+  "seed": 100476,
+  "sum": 801,
+  "value_bound": 161,
+  "best_score": 136,
+  "n_runs": 20
+ },
+ {
+  "seed": 100477,
+  "sum": 875,
+  "value_bound": 161,
+  "best_score": 110,
+  "n_runs": 20
+ },
+ {
+  "seed": 100478,
+  "sum": 767,
+  "value_bound": 161,
+  "best_score": 155,
+  "n_runs": 20
+ },
+ {
+  "seed": 100479,
+  "sum": 823,
+  "value_bound": 161,
+  "best_score": 138,
+  "n_runs": 20
+ },
+ {
+  "seed": 100480,
+  "sum": 772,
+  "value_bound": 161,
+  "best_score": 136,
+  "n_runs": 20
+ },
+ {
+  "seed": 100481,
+  "sum": 820,
+  "value_bound": 162,
+  "best_score": 129,
+  "n_runs": 20
+ },
+ {
+  "seed": 100482,
+  "sum": 830,
+  "value_bound": 162,
+  "best_score": 125,
+  "n_runs": 20
+ },
+ {
+  "seed": 100483,
+  "sum": 812,
+  "value_bound": 161,
+  "best_score": 130,
+  "n_runs": 20
+ },
+ {
+  "seed": 100484,
+  "sum": 857,
+  "value_bound": 161,
+  "best_score": 129,
+  "n_runs": 20
+ },
+ {
+  "seed": 100485,
+  "sum": 818,
+  "value_bound": 161,
+  "best_score": 136,
+  "n_runs": 20
+ },
+ {
+  "seed": 100486,
+  "sum": 854,
+  "value_bound": 161,
+  "best_score": 107,
+  "n_runs": 20
+ },
+ {
+  "seed": 100487,
+  "sum": 774,
+  "value_bound": 161,
+  "best_score": 153,
+  "n_runs": 20
+ },
+ {
+  "seed": 100488,
+  "sum": 813,
+  "value_bound": 161,
+  "best_score": 130,
+  "n_runs": 20
+ },
+ {
+  "seed": 100489,
+  "sum": 864,
+  "value_bound": 161,
+  "best_score": 114,
+  "n_runs": 20
+ },
+ {
+  "seed": 100490,
+  "sum": 839,
+  "value_bound": 161,
+  "best_score": 134,
+  "n_runs": 20
+ },
+ {
+  "seed": 100491,
+  "sum": 802,
+  "value_bound": 161,
+  "best_score": 134,
+  "n_runs": 20
+ },
+ {
+  "seed": 100492,
+  "sum": 844,
+  "value_bound": 161,
+  "best_score": 107,
+  "n_runs": 20
+ },
+ {
+  "seed": 100493,
+  "sum": 817,
+  "value_bound": 161,
+  "best_score": 148,
+  "n_runs": 20
+ },
+ {
+  "seed": 100494,
+  "sum": 756,
+  "value_bound": 161,
+  "best_score": 157,
+  "n_runs": 20
+ },
+ {
+  "seed": 100495,
+  "sum": 838,
+  "value_bound": 161,
+  "best_score": 124,
+  "n_runs": 20
+ },
+ {
+  "seed": 100496,
+  "sum": 799,
+  "value_bound": 161,
+  "best_score": 141,
+  "n_runs": 20
+ },
+ {
+  "seed": 100497,
+  "sum": 797,
+  "value_bound": 161,
+  "best_score": 147,
+  "n_runs": 20
+ },
+ {
+  "seed": 100498,
+  "sum": 842,
+  "value_bound": 161,
+  "best_score": 116,
+  "n_runs": 20
+ },
+ {
+  "seed": 100499,
+  "sum": 818,
+  "value_bound": 161,
+  "best_score": 117,
+  "n_runs": 20
+ }
+]
